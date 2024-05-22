@@ -8,10 +8,8 @@ import java.util.List;
 public class PeerCreateRequest {
     private String username;
     private String password;
-    private String role;
     private String name;
     private String bio;
     private List<String> interests;
     private String location;
-    private String personality;
 }

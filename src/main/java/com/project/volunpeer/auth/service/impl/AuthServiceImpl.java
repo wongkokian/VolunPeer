@@ -15,7 +15,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.stream.Collectors;
@@ -27,9 +26,6 @@ public class AuthServiceImpl implements AuthService {
 
     @Autowired
     JwtUtil jwtUtil;
-
-    @Autowired
-    PasswordEncoder passwordEncoder;
 
     @Override
     public ResponseEntity<LoginResponse> login(LoginRequest request) {
@@ -46,7 +42,7 @@ public class AuthServiceImpl implements AuthService {
                 .map(item -> item.getAuthority())
                 .collect(Collectors.toList()).getFirst();
 
-        LoginResponse response = new LoginResponse(userDetails.getUsername(), role);
+        LoginResponse response = new LoginResponse(role);
         response.setStatusCode(StatusCode.SUCCESS);
 
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString()).body(response);

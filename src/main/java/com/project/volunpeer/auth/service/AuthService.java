@@ -7,5 +7,6 @@ import org.springframework.http.ResponseEntity;
 
 public interface AuthService {
     ResponseEntity<LoginResponse> login(LoginRequest request);
+
     ResponseEntity<LogoutResponse> logout();
 }

@@ -6,7 +6,6 @@ import com.project.volunpeer.auth.dto.response.LogoutResponse;
 import com.project.volunpeer.auth.service.AuthService;
 import com.project.volunpeer.common.enums.StatusCode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,4 +40,5 @@ public class AuthController {
             response = ResponseEntity.badRequest().body(logoutResponse);
         }
         return response;
-    }}
+    }
+}

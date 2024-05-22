@@ -9,6 +9,5 @@ import lombok.Data;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
 public class PeerCreateResponse extends BaseResponse {
-    private String username;
-    private String role;
+
 }

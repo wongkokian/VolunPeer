@@ -20,6 +20,5 @@ public class LoginEntity {
     @AllArgsConstructor
     public static class Key {
         private String username;
-        private String password;
     }
 }
