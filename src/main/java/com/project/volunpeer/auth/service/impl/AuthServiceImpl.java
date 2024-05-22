@@ -2,6 +2,7 @@ package com.project.volunpeer.auth.service.impl;
 
 import com.project.volunpeer.auth.dto.request.LoginRequest;
 import com.project.volunpeer.auth.dto.response.LoginResponse;
+import com.project.volunpeer.auth.dto.response.LogoutResponse;
 import com.project.volunpeer.auth.service.AuthService;
 import com.project.volunpeer.common.enums.StatusCode;
 import com.project.volunpeer.security.jwt.JwtUtil;
@@ -48,7 +49,14 @@ public class AuthServiceImpl implements AuthService {
         LoginResponse response = new LoginResponse(userDetails.getUsername(), role);
         response.setStatusCode(StatusCode.SUCCESS);
 
-        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
-                .body(response);
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString()).body(response);
+    }
+
+    @Override
+    public ResponseEntity<LogoutResponse> logout() {
+        ResponseCookie jwtCookie = jwtUtil.getCleanJwtCookie();
+        LogoutResponse response = new LogoutResponse();
+        response.setStatusCode(StatusCode.SUCCESS);
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString()).body(response);
     }
 }
