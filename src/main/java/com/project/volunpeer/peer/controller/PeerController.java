@@ -1,7 +1,9 @@
 package com.project.volunpeer.peer.controller;
 
 import com.project.volunpeer.common.enums.StatusCode;
+import com.project.volunpeer.peer.dto.request.PeerAddPersonalityRequest;
 import com.project.volunpeer.peer.dto.request.PeerCreateRequest;
+import com.project.volunpeer.peer.dto.response.PeerAddPersonalityResponse;
 import com.project.volunpeer.peer.dto.response.PeerCreateResponse;
 import com.project.volunpeer.peer.dto.response.PeerDetailsResponse;
 import com.project.volunpeer.peer.service.PeerService;
@@ -31,6 +33,17 @@ public class PeerController {
         PeerDetailsResponse response = new PeerDetailsResponse();
         try {
             response = peerService.getPeerDetails(httpRequest);
+        } catch (Exception e) {
+            response.setStatusCode(StatusCode.FAILURE);
+        }
+        return response;
+    }
+
+    @PostMapping("/add-personality")
+    public PeerAddPersonalityResponse addPeerPersonality(@RequestBody PeerAddPersonalityRequest request, HttpServletRequest httpRequest) {
+        PeerAddPersonalityResponse response = new PeerAddPersonalityResponse();
+        try {
+            response = peerService.addPeerPersonality(request, httpRequest);
         } catch (Exception e) {
             response.setStatusCode(StatusCode.FAILURE);
         }

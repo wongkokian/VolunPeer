@@ -8,7 +8,8 @@ public enum StatusCode {
     FAILURE("Failure", 500),
     USERNAME_TAKEN("Username taken", 501),
     USER_DOES_NOT_EXIST("User does not exist", 502),
-    QUEST_DOES_NOT_EXIST("Quest does not exist", 503);
+    QUEST_DOES_NOT_EXIST("Quest does not exist", 503),
+    INVALID_PERSONALITY("Invalid personality", 504);
 
     private final String status;
     private final Integer code;

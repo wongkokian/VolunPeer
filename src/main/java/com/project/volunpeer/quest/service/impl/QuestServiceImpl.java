@@ -11,7 +11,6 @@ import com.project.volunpeer.quest.dto.request.QuestDetailsRequest;
 import com.project.volunpeer.quest.dto.response.QuestCreateResponse;
 import com.project.volunpeer.quest.dto.response.QuestDetailsResponse;
 import com.project.volunpeer.quest.service.QuestService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,13 +46,13 @@ public class QuestServiceImpl implements QuestService {
         QuestDetailsResponse response = new QuestDetailsResponse();
 
         Optional<QuestEntity> questEntity = questRepository.findById(new QuestEntity.Key(request.getQuestId()));
-        if (questEntity.isPresent()) {
-            response = mapper.convertValue(questEntity.get(), QuestDetailsResponse.class);
-            response.setStatusCode(StatusCode.SUCCESS);
-        } else {
+        if (questEntity.isEmpty()) {
             response.setStatusCode(StatusCode.QUEST_DOES_NOT_EXIST);
+            return response;
         }
 
+        response = mapper.convertValue(questEntity.get(), QuestDetailsResponse.class);
+        response.setStatusCode(StatusCode.SUCCESS);
         return response;
     }
 }

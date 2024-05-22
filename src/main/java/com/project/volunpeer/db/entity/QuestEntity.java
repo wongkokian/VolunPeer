@@ -6,7 +6,6 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -19,8 +18,8 @@ public class QuestEntity {
     private String orgId;
     private String title;
     private String description;
-    private LocalDateTime startDateTime;
-    private LocalDateTime endDateTime;
+    private String startDateTime;
+    private String endDateTime;
     private List<String> relevantInterests;
     private String location;
     private String contactName;
