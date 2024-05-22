@@ -13,5 +13,5 @@ public class PeerCreateRequest {
     private String bio;
     private List<String> interests;
     private String location;
-    private List<String> traits;
+    private String personality;
 }

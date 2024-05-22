@@ -17,5 +17,5 @@ public class PeerDetailsResponse extends BaseResponse {
     private List<String> interests;
     private String location;
     private List<String> connections;
-    private List<String> traits;
+    private String personality;
 }
