@@ -1,10 +1,12 @@
 package com.project.volunpeer.peer.service;
 
-import com.project.volunpeer.peer.dto.request.CreatePeerRequest;
-import com.project.volunpeer.peer.dto.request.GetPeerRequest;
-import com.project.volunpeer.peer.dto.response.GetPeerResponse;
+import com.project.volunpeer.peer.dto.request.PeerCreateRequest;
+import com.project.volunpeer.peer.dto.request.PeerDetailsRequest;
+import com.project.volunpeer.peer.dto.response.PeerCreateResponse;
+import com.project.volunpeer.peer.dto.response.PeerDetailsResponse;
 
 public interface PeerService {
-    void createPeer(CreatePeerRequest request);
-    GetPeerResponse getPeer(GetPeerRequest request);
+    PeerCreateResponse createPeer(PeerCreateRequest request);
+
+    PeerDetailsResponse getPeerDetails(PeerDetailsRequest request);
 }

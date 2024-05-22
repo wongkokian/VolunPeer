@@ -1,5 +1,6 @@
-package com.project.volunpeer.peer.entity;
+package com.project.volunpeer.db.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
@@ -9,6 +10,7 @@ import java.util.List;
 
 @Data
 @Document("Entities")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PeerEntity {
     @Id
     private Key id;

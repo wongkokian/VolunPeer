@@ -5,9 +5,10 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class CreatePeerRequest {
-    private String userName;
+public class PeerCreateRequest {
+    private String username;
     private String password;
+    private String role;
     private String name;
     private String bio;
     private List<String> interests;

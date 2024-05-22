@@ -10,7 +10,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
-public class GetPeerResponse extends BaseResponse {
+public class PeerDetailsResponse extends BaseResponse {
     private String peerId;
     private String name;
     private String bio;
