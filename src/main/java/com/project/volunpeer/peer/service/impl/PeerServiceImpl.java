@@ -15,6 +15,7 @@ import com.project.volunpeer.peer.dto.response.PeerCreateResponse;
 import com.project.volunpeer.peer.dto.response.PeerDetailsResponse;
 import com.project.volunpeer.peer.service.PeerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -27,7 +28,11 @@ public class PeerServiceImpl implements PeerService {
     @Autowired
     LoginRepository loginRepository;
 
+    @Autowired
     KeyGeneratorUtil keyGen;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     ObjectMapper mapper = new ObjectMapper();
 
@@ -47,21 +52,23 @@ public class PeerServiceImpl implements PeerService {
         peerRepository.save(peerEntity);
 
         PeerLoginEntity loginEntity = mapper.convertValue(request, PeerLoginEntity.class);
-        loginEntity.setId(new LoginEntity.Key(request.getUsername(), request.getPassword()));
+        loginEntity.setPassword(passwordEncoder.encode(request.getPassword()));
+        loginEntity.setId(new LoginEntity.Key(request.getUsername(), passwordEncoder.encode(request.getPassword())));
         loginEntity.setPeerId(peerId);
         loginRepository.save(loginEntity);
 
         response.setUsername(request.getUsername());
         response.setRole(request.getRole());
+        response.setStatusCode(StatusCode.SUCCESS);
         return response;
     }
 
     @Override
     public PeerDetailsResponse getPeerDetails(PeerDetailsRequest request) {
         PeerDetailsResponse response = new PeerDetailsResponse();
-        Optional<PeerEntity> entity = peerRepository.findById(new PeerEntity.Key(request.getPeerId()));
-        if (entity.isPresent()) {
-            response = mapper.convertValue(entity.get(), PeerDetailsResponse.class);
+        Optional<PeerEntity> peerEntity = peerRepository.findById(new PeerEntity.Key(request.getPeerId()));
+        if (peerEntity.isPresent()) {
+            response = mapper.convertValue(peerEntity.get(), PeerDetailsResponse.class);
             response.setStatusCode(StatusCode.SUCCESS);
         } else {
             response.setStatusCode(StatusCode.USER_DOES_NOT_EXIST);

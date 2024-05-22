@@ -3,6 +3,7 @@ package com.project.volunpeer.auth.service.impl;
 import com.project.volunpeer.auth.dto.request.LoginRequest;
 import com.project.volunpeer.auth.dto.response.LoginResponse;
 import com.project.volunpeer.auth.service.AuthService;
+import com.project.volunpeer.common.enums.StatusCode;
 import com.project.volunpeer.security.jwt.JwtUtil;
 import com.project.volunpeer.security.service.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,15 +14,21 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 import java.util.stream.Collectors;
 
+@Service
 public class AuthServiceImpl implements AuthService {
     @Autowired
     AuthenticationManager authenticationManager;
 
     @Autowired
     JwtUtil jwtUtil;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     @Override
     public ResponseEntity<LoginResponse> login(LoginRequest request) {
@@ -38,7 +45,10 @@ public class AuthServiceImpl implements AuthService {
                 .map(item -> item.getAuthority())
                 .collect(Collectors.toList()).getFirst();
 
+        LoginResponse response = new LoginResponse(userDetails.getUsername(), role);
+        response.setStatusCode(StatusCode.SUCCESS);
+
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
-                .body(new LoginResponse(userDetails.getUsername(), role));
+                .body(response);
     }
 }

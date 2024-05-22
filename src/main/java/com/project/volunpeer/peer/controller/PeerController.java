@@ -23,7 +23,6 @@ public class PeerController {
         PeerCreateResponse response = new PeerCreateResponse();
         try {
             response = peerService.createPeer(request);
-            response.setStatusCode(StatusCode.SUCCESS);
         } catch (Exception e) {
             response.setStatusCode(StatusCode.FAILURE);
         }
@@ -35,7 +34,6 @@ public class PeerController {
         PeerDetailsResponse response = new PeerDetailsResponse();
         try {
             response = peerService.getPeerDetails(request);
-            response.setStatusCode(StatusCode.SUCCESS);
         } catch (Exception e) {
             response.setStatusCode(StatusCode.FAILURE);
         }
