@@ -20,6 +20,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableMethodSecurity
 public class WebSecurityConfig {
+    private static final String[] AUTH_WHITE_LIST = {
+            "/v3/api-docs/**",
+            "/swagger-ui/**",
+            "/v2/api-docs/**",
+            "/swagger-resources/**"
+    };
+
     @Autowired
     UserDetailsServiceImpl userDetailsService;
 
@@ -59,6 +66,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers("/auth/**").permitAll()
                                 .requestMatchers("/peer/create").permitAll()
+                                .requestMatchers(AUTH_WHITE_LIST).permitAll()
                                 .anyRequest().authenticated()
                 );
 
