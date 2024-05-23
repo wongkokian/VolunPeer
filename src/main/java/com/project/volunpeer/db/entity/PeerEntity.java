@@ -16,7 +16,6 @@ public class PeerEntity {
     private Key id;
     private String peerId;
     private String name;
-    private String bio;
     private List<String> interests;
     private String location;
     private List<String> connections;

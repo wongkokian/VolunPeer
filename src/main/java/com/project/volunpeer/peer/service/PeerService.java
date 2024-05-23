@@ -12,5 +12,5 @@ public interface PeerService {
 
     PeerDetailsResponse getPeerDetails(HttpServletRequest httpRequest);
 
-    PeerAddPersonalityResponse addPeerPersonality(PeerAddPersonalityRequest request, HttpServletRequest httpRequest);
+    PeerAddPersonalityResponse addPeerPersonalityInterest(PeerAddPersonalityRequest request, HttpServletRequest httpRequest);
 }

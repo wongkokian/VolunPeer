@@ -9,7 +9,5 @@ public class PeerCreateRequest {
     private String username;
     private String password;
     private String name;
-    private String bio;
-    private List<String> interests;
     private String location;
 }

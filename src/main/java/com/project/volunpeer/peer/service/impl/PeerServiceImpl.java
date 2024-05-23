@@ -15,6 +15,7 @@ import com.project.volunpeer.peer.dto.request.PeerCreateRequest;
 import com.project.volunpeer.peer.dto.response.PeerAddPersonalityResponse;
 import com.project.volunpeer.peer.dto.response.PeerCreateResponse;
 import com.project.volunpeer.peer.dto.response.PeerDetailsResponse;
+import com.project.volunpeer.peer.enums.Interest;
 import com.project.volunpeer.peer.enums.Personality;
 import com.project.volunpeer.peer.service.PeerService;
 import com.project.volunpeer.security.jwt.JwtUtil;
@@ -86,11 +87,18 @@ public class PeerServiceImpl implements PeerService {
     }
 
     @Override
-    public PeerAddPersonalityResponse addPeerPersonality(PeerAddPersonalityRequest request, HttpServletRequest httpRequest) {
+    public PeerAddPersonalityResponse addPeerPersonalityInterest(PeerAddPersonalityRequest request, HttpServletRequest httpRequest) {
         PeerAddPersonalityResponse response = new PeerAddPersonalityResponse();
         if (!Personality.isValidPersonality(request.getPersonality())) {
             response.setStatusCode(StatusCode.INVALID_PERSONALITY);
             return response;
+        }
+
+        for(String interest : request.getInterests()) {
+            if (!Interest.isValidInterest(interest)) {
+                response.setStatusCode(StatusCode.INVALID_INTEREST);
+                return response;
+            }
         }
 
         PeerEntity peerEntity = getPeerFromHttpRequest(httpRequest);
@@ -100,6 +108,7 @@ public class PeerServiceImpl implements PeerService {
         }
 
         peerEntity.setPersonality(request.getPersonality());
+        peerEntity.setInterests(request.getInterests());
         peerRepository.save(peerEntity);
         response.setStatusCode(StatusCode.SUCCESS);
         return response;

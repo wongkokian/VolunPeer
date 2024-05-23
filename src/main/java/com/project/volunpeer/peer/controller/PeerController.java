@@ -39,11 +39,11 @@ public class PeerController {
         return response;
     }
 
-    @PostMapping("/add-personality")
+    @PostMapping("/add-personality-interest")
     public PeerAddPersonalityResponse addPeerPersonality(@RequestBody PeerAddPersonalityRequest request, HttpServletRequest httpRequest) {
         PeerAddPersonalityResponse response = new PeerAddPersonalityResponse();
         try {
-            response = peerService.addPeerPersonality(request, httpRequest);
+            response = peerService.addPeerPersonalityInterest(request, httpRequest);
         } catch (Exception e) {
             response.setStatusCode(StatusCode.FAILURE);
         }

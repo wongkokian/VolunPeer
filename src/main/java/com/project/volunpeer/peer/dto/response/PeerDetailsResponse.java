@@ -12,7 +12,6 @@ import java.util.List;
 @Data
 public class PeerDetailsResponse extends BaseResponse {
     private String name;
-    private String bio;
     private List<String> interests;
     private String location;
     private List<String> connections;
