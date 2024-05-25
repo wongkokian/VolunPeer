@@ -1,7 +1,9 @@
 package com.project.volunpeer_be.common.util;
 
+import com.project.volunpeer_be.db.entity.OrganisationEntity;
 import com.project.volunpeer_be.db.entity.PeerEntity;
 import com.project.volunpeer_be.db.entity.PeerLoginEntity;
+import com.project.volunpeer_be.db.repository.OrganisationRepository;
 import com.project.volunpeer_be.db.repository.PeerLoginRepository;
 import com.project.volunpeer_be.db.repository.PeerRepository;
 import com.project.volunpeer_be.security.jwt.JwtUtil;
@@ -12,7 +14,7 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 
 @Component
-public class PeerUtil {
+public class CommonUtil {
     @Autowired
     JwtUtil jwtUtil;
 
@@ -21,6 +23,9 @@ public class PeerUtil {
 
     @Autowired
     PeerRepository peerRepository;
+
+    @Autowired
+    OrganisationRepository organisationRepository;
 
     public PeerEntity getPeerFromHttpRequest(HttpServletRequest httpRequest) {
         String token = jwtUtil.getJwtFromCookies(httpRequest);
@@ -38,6 +43,12 @@ public class PeerUtil {
         Optional<PeerEntity> peerEntity = peerRepository.findById(
                 new PeerEntity.Key(peerId));
         return peerEntity.orElse(null);
+    }
+
+    public OrganisationEntity getOrganisationFromOrganisationId(String organisationId) {
+        Optional<OrganisationEntity> organisationEntity = organisationRepository.findById(
+                new OrganisationEntity.Key(organisationId));
+        return organisationEntity.orElse(null);
     }
 }
 

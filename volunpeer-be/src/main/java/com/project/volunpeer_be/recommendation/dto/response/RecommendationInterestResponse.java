@@ -3,6 +3,7 @@ package com.project.volunpeer_be.recommendation.dto.response;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.project.volunpeer_be.common.dto.response.BaseResponse;
+import com.project.volunpeer_be.recommendation.dto.Recommendation;
 import lombok.Data;
 
 import java.util.List;
@@ -11,5 +12,5 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
 public class RecommendationInterestResponse extends BaseResponse {
-    private List<RecommendationResponse> recommendations;
+    private List<Recommendation> recommendations;
 }

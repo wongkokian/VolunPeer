@@ -42,8 +42,7 @@ public class RecommendationController {
     }
 
     @GetMapping("/personality")
-    public RecommendationPersonalityResponse getPersonalityRecommendation(
-            HttpServletRequest httpRequest) {
+    public RecommendationPersonalityResponse getPersonalityRecommendation(HttpServletRequest httpRequest) {
         RecommendationPersonalityResponse response = new RecommendationPersonalityResponse();
         try {
             response = recommendationService.getPersonalityRecommendation(httpRequest);
@@ -53,5 +52,4 @@ public class RecommendationController {
         }
         return response;
     }
-
 }

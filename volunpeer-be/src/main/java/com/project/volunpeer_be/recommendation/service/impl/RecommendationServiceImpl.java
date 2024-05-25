@@ -1,25 +1,23 @@
 package com.project.volunpeer_be.recommendation.service.impl;
 
+import com.project.volunpeer_be.common.util.CommonUtil;
 import com.project.volunpeer_be.db.entity.PeerEntity;
 import com.project.volunpeer_be.db.entity.PeerLoginEntity;
 import com.project.volunpeer_be.db.entity.QuestEntity;
 import com.project.volunpeer_be.db.repository.PeerLoginRepository;
 import com.project.volunpeer_be.db.repository.PeerRepository;
 import com.project.volunpeer_be.db.repository.QuestRepository;
+import com.project.volunpeer_be.recommendation.dto.Recommendation;
 import com.project.volunpeer_be.recommendation.dto.response.RecommendationAllResponse;
 import com.project.volunpeer_be.recommendation.dto.response.RecommendationInterestResponse;
 import com.project.volunpeer_be.recommendation.dto.response.RecommendationPersonalityResponse;
-import com.project.volunpeer_be.recommendation.dto.response.RecommendationResponse;
 import com.project.volunpeer_be.recommendation.service.RecommendationService;
 import com.project.volunpeer_be.security.jwt.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 
@@ -32,35 +30,32 @@ public class RecommendationServiceImpl implements RecommendationService {
     PeerLoginRepository peerLoginRepository;
     @Autowired
     JwtUtil jwtUtil;
+    @Autowired
+    CommonUtil commonUtil;
 
     @Override
     public RecommendationAllResponse getAllRecommendation(HttpServletRequest httpRequest) {
         RecommendationAllResponse response = new RecommendationAllResponse();
         PeerEntity peerEntity = getPeerFromHttpRequest(httpRequest);
-        List<RecommendationResponse> list_recs = new ArrayList<>();
+        List<Recommendation> list_recs = new ArrayList<>();
 
         // All Quests, need to change to quests that are not completed, maybe a filter
         List<QuestEntity> questEntity = questRepository.findAll();
         questEntity.forEach(quest -> {
-            double score = getDistanceScore(peerEntity.getLocation(), "1.355245,104.031772245") // NEED TO CHANGE HERE I CANT
-                    // FIND LOCATION
-                    + getInterestScore(peerEntity.getInterests(), "art") // NEED TO CHANGE HERE I CANT FIND INTERESTS
-                    + getPersonalityScore("INTP", Arrays.asList(5, 5, 5, 5, 5, 5, 5, 5));
+            double score = getDistanceScore(peerEntity.getLocation(), quest.getLocationCoordinates())
+                    + getInterestScore(peerEntity.getInterests(), quest.getRelevantInterest())
+                    + getPersonalityScore(peerEntity.getPersonality(), Arrays.asList(5, 5, 5, 5, 5, 5, 5, 5));
             score = score / 3;
-            RecommendationResponse recommendation = new RecommendationResponse();
-            recommendation.orgId = quest.getOrgId();
-            recommendation.title = quest.getTitle();
-            recommendation.description = quest.getDescription();
-            recommendation.relevantInterests = quest.getRelevantInterests();
-            recommendation.contactName = quest.getContactName();
-            recommendation.contactNum = quest.getContactNum();
-            recommendation.contactEmail = quest.getContactEmail();
-            recommendation.mbtiTypes = quest.getMbtiTypes();
-            recommendation.numRegistered = quest.getNumRegistered();
-            recommendation.score = score;
+            Recommendation recommendation = new Recommendation();
+            recommendation.setOrgName(commonUtil.getOrganisationFromOrganisationId(quest.getOrgId()).getName());
+            recommendation.setTitle(quest.getTitle());
+            recommendation.setDescription(quest.getDescription());
+            recommendation.setScore(score);
+            recommendation.setQuestId(quest.getQuestId());
+            recommendation.setRelevantInterest(quest.getRelevantInterest());
             list_recs.add(recommendation);
         });
-        list_recs.sort((a, b) -> a.score < b.score ? -1 : a.score == b.score ? 0 : 1);
+        list_recs.sort(Comparator.comparingDouble(a -> a.getScore()));
         response.setRecommendations(list_recs);
         return response;
     }
@@ -69,29 +64,24 @@ public class RecommendationServiceImpl implements RecommendationService {
     public RecommendationInterestResponse getInterestRecommendation(HttpServletRequest httpRequest) {
         RecommendationInterestResponse response = new RecommendationInterestResponse();
         PeerEntity peerEntity = getPeerFromHttpRequest(httpRequest);
-        List<RecommendationResponse> list_recs = new ArrayList<>();
+        List<Recommendation> list_recs = new ArrayList<>();
 
         // All Quests, need to change to quests that are not completed, maybe a filter
         List<QuestEntity> questEntity = questRepository.findAll();
         questEntity.forEach(quest -> {
-            double score = getDistanceScore(peerEntity.getLocation(), "1.355245,104.031772245") // NEED TO CHANGE HERE I CANT
-                    // FIND LOCATION
-                    + getInterestScore(peerEntity.getInterests(), "art"); // NEED TO CHANGE HERE I CANT FIND INTERESTS
+            double score = getDistanceScore(peerEntity.getLocation(), quest.getLocationCoordinates())
+                    + getInterestScore(peerEntity.getInterests(), quest.getRelevantInterest());
             score = score / 2;
-            RecommendationResponse recommendation = new RecommendationResponse();
-            recommendation.orgId = quest.getOrgId();
-            recommendation.title = quest.getTitle();
-            recommendation.description = quest.getDescription();
-            recommendation.relevantInterests = quest.getRelevantInterests();
-            recommendation.contactName = quest.getContactName();
-            recommendation.contactNum = quest.getContactNum();
-            recommendation.contactEmail = quest.getContactEmail();
-            recommendation.mbtiTypes = quest.getMbtiTypes();
-            recommendation.numRegistered = quest.getNumRegistered();
-            recommendation.score = score;
+            Recommendation recommendation = new Recommendation();
+            recommendation.setOrgName(commonUtil.getOrganisationFromOrganisationId(quest.getOrgId()).getName());
+            recommendation.setTitle(quest.getTitle());
+            recommendation.setDescription(quest.getDescription());
+            recommendation.setScore(score);
+            recommendation.setQuestId(quest.getQuestId());
+            recommendation.setRelevantInterest(quest.getRelevantInterest());
             list_recs.add(recommendation);
         });
-        list_recs.sort((a, b) -> a.score < b.score ? -1 : a.score == b.score ? 0 : 1);
+        list_recs.sort(Comparator.comparingDouble(a -> a.getScore()));
         response.setRecommendations(list_recs);
         return response;
     }
@@ -100,29 +90,24 @@ public class RecommendationServiceImpl implements RecommendationService {
     public RecommendationPersonalityResponse getPersonalityRecommendation(HttpServletRequest httpRequest) {
         RecommendationPersonalityResponse response = new RecommendationPersonalityResponse();
         PeerEntity peerEntity = getPeerFromHttpRequest(httpRequest);
-        List<RecommendationResponse> list_recs = new ArrayList<>();
+        List<Recommendation> list_recs = new ArrayList<>();
 
         // All Quests, need to change to quests that are not completed, maybe a filter
         List<QuestEntity> questEntity = questRepository.findAll();
         questEntity.forEach(quest -> {
-            double score = getDistanceScore(peerEntity.getLocation(), "1.355245,104.031772245") // NEED TO CHANGE HERE I CANT
-                    // FIND LOCATION
-                    + getPersonalityScore("INTP", Arrays.asList(5, 5, 5, 5, 5, 5, 5, 5));// NEED TO CHANGE HERE I CANT FIND
+            double score = getDistanceScore(peerEntity.getLocation(), quest.getLocationCoordinates())
+                    + getPersonalityScore(peerEntity.getPersonality(), Arrays.asList(5, 5, 5, 5, 5, 5, 5, 5));
 
-            RecommendationResponse recommendation = new RecommendationResponse();
-            recommendation.orgId = quest.getOrgId();
-            recommendation.title = quest.getTitle();
-            recommendation.description = quest.getDescription();
-            recommendation.relevantInterests = quest.getRelevantInterests();
-            recommendation.contactName = quest.getContactName();
-            recommendation.contactNum = quest.getContactNum();
-            recommendation.contactEmail = quest.getContactEmail();
-            recommendation.mbtiTypes = quest.getMbtiTypes();
-            recommendation.numRegistered = quest.getNumRegistered();
-            recommendation.score = score;
+            Recommendation recommendation = new Recommendation();
+            recommendation.setOrgName(commonUtil.getOrganisationFromOrganisationId(quest.getOrgId()).getName());
+            recommendation.setTitle(quest.getTitle());
+            recommendation.setDescription(quest.getDescription());
+            recommendation.setScore(score);
+            recommendation.setQuestId(quest.getQuestId());
+            recommendation.setRelevantInterest(quest.getRelevantInterest());
             list_recs.add(recommendation);
         });
-        list_recs.sort((a, b) -> a.score < b.score ? -1 : a.score == b.score ? 0 : 1);
+        list_recs.sort(Comparator.comparingDouble(a -> a.getScore()));
         response.setRecommendations(list_recs);
         return response;
     }

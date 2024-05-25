@@ -5,7 +5,7 @@ import com.project.volunpeer_be.common.enums.KeyType;
 import com.project.volunpeer_be.common.enums.Role;
 import com.project.volunpeer_be.common.enums.StatusCode;
 import com.project.volunpeer_be.common.util.KeyGeneratorUtil;
-import com.project.volunpeer_be.common.util.PeerUtil;
+import com.project.volunpeer_be.common.util.CommonUtil;
 import com.project.volunpeer_be.db.entity.LoginEntity;
 import com.project.volunpeer_be.db.entity.PeerEntity;
 import com.project.volunpeer_be.db.entity.PeerLoginEntity;
@@ -41,7 +41,7 @@ public class PeerServiceImpl implements PeerService {
     PasswordEncoder passwordEncoder;
 
     @Autowired
-    PeerUtil peerUtil;
+    CommonUtil commonUtil;
 
     ObjectMapper mapper = new ObjectMapper();
 
@@ -78,7 +78,7 @@ public class PeerServiceImpl implements PeerService {
     public PeerDetailsResponse getPeerDetails(HttpServletRequest httpRequest) {
         PeerDetailsResponse response = new PeerDetailsResponse();
 
-        PeerEntity peerEntity = peerUtil.getPeerFromHttpRequest(httpRequest);
+        PeerEntity peerEntity = commonUtil.getPeerFromHttpRequest(httpRequest);
         if (peerEntity == null) {
             response.setStatusCode(StatusCode.USER_DOES_NOT_EXIST);
             return response;
@@ -104,7 +104,7 @@ public class PeerServiceImpl implements PeerService {
             }
         }
 
-        PeerEntity peerEntity = peerUtil.getPeerFromHttpRequest(httpRequest);
+        PeerEntity peerEntity = commonUtil.getPeerFromHttpRequest(httpRequest);
         if (peerEntity == null) {
             response.setStatusCode(StatusCode.USER_DOES_NOT_EXIST);
             return response;

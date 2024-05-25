@@ -1,7 +1,7 @@
 package com.project.volunpeer_be.connection.service.impl;
 
 import com.project.volunpeer_be.common.enums.StatusCode;
-import com.project.volunpeer_be.common.util.PeerUtil;
+import com.project.volunpeer_be.common.util.CommonUtil;
 import com.project.volunpeer_be.connection.dto.Connection;
 import com.project.volunpeer_be.connection.dto.request.*;
 import com.project.volunpeer_be.connection.dto.response.*;
@@ -22,15 +22,15 @@ public class ConnectionServiceImpl implements ConnectionService {
     PeerRepository peerRepository;
 
     @Autowired
-    PeerUtil peerUtil;
+    CommonUtil commonUtil;
 
     @Override
     public ConnectionListResponse getConnectionList(HttpServletRequest httpRequest) {
-        PeerEntity peer = peerUtil.getPeerFromHttpRequest(httpRequest);
+        PeerEntity peer = commonUtil.getPeerFromHttpRequest(httpRequest);
         HashSet<String> connectionIds = peer.getConnections();
         List<Connection> connectionList = new ArrayList<>();
         for (String connectionId : connectionIds) {
-            PeerEntity connectionEntity = peerUtil.getPeerFromPeerId(connectionId);
+            PeerEntity connectionEntity = commonUtil.getPeerFromPeerId(connectionId);
             Connection connection = new Connection(connectionId, connectionEntity.getName());
             connectionList.add(connection);
         }
@@ -43,11 +43,11 @@ public class ConnectionServiceImpl implements ConnectionService {
 
     @Override
     public SentConnectionListResponse getSentConnectionList(HttpServletRequest httpRequest) {
-        PeerEntity peer = peerUtil.getPeerFromHttpRequest(httpRequest);
+        PeerEntity peer = commonUtil.getPeerFromHttpRequest(httpRequest);
         HashSet<String> sentConnectionIds = peer.getSentConnectionRequests();
         List<Connection> sentConnectionList = new ArrayList<>();
         for (String sentConnectionId : sentConnectionIds) {
-            PeerEntity sentConnectionEntity = peerUtil.getPeerFromPeerId(sentConnectionId);
+            PeerEntity sentConnectionEntity = commonUtil.getPeerFromPeerId(sentConnectionId);
             Connection sentConnection = new Connection(sentConnectionId, sentConnectionEntity.getName());
             sentConnectionList.add(sentConnection);
         }
@@ -60,11 +60,11 @@ public class ConnectionServiceImpl implements ConnectionService {
 
     @Override
     public ReceivedConnectionListResponse getReceivedConnectionList(HttpServletRequest httpRequest) {
-        PeerEntity peer = peerUtil.getPeerFromHttpRequest(httpRequest);
+        PeerEntity peer = commonUtil.getPeerFromHttpRequest(httpRequest);
         HashSet<String> receivedConnectionIds = peer.getReceivedConnectionRequests();
         List<Connection> receivedConnectionList = new ArrayList<>();
         for (String receivedConnectionId : receivedConnectionIds) {
-            PeerEntity receivedConnectionEntity = peerUtil.getPeerFromPeerId(receivedConnectionId);
+            PeerEntity receivedConnectionEntity = commonUtil.getPeerFromPeerId(receivedConnectionId);
             Connection receivedConnection = new Connection(receivedConnectionId, receivedConnectionEntity.getName());
             receivedConnectionList.add(receivedConnection);
         }
@@ -77,13 +77,13 @@ public class ConnectionServiceImpl implements ConnectionService {
 
     @Override
     public SendConnectionResponse sendConnection(SendConnectionRequest request, HttpServletRequest httpRequest) {
-        PeerEntity sender = peerUtil.getPeerFromHttpRequest(httpRequest);
+        PeerEntity sender = commonUtil.getPeerFromHttpRequest(httpRequest);
         HashSet<String> sentConnectionRequests = sender.getSentConnectionRequests();
         sentConnectionRequests.add(request.getPeerId());
         sender.setSentConnectionRequests(sentConnectionRequests);
         peerRepository.save(sender);
 
-        PeerEntity receiver = peerUtil.getPeerFromPeerId(request.getPeerId());
+        PeerEntity receiver = commonUtil.getPeerFromPeerId(request.getPeerId());
         HashSet<String> receivedConnectionRequests = receiver.getReceivedConnectionRequests();
         receivedConnectionRequests.add(sender.getPeerId());
         receiver.setReceivedConnectionRequests(receivedConnectionRequests);
@@ -96,13 +96,13 @@ public class ConnectionServiceImpl implements ConnectionService {
 
     @Override
     public CancelConnectionResponse cancelConnection(CancelConnectionRequest request, HttpServletRequest httpRequest) {
-        PeerEntity sender = peerUtil.getPeerFromHttpRequest(httpRequest);
+        PeerEntity sender = commonUtil.getPeerFromHttpRequest(httpRequest);
         HashSet<String> sentConnectionRequests = sender.getSentConnectionRequests();
         sentConnectionRequests.remove(request.getPeerId());
         sender.setSentConnectionRequests(sentConnectionRequests);
         peerRepository.save(sender);
 
-        PeerEntity receiver = peerUtil.getPeerFromPeerId(request.getPeerId());
+        PeerEntity receiver = commonUtil.getPeerFromPeerId(request.getPeerId());
         HashSet<String> receivedConnectionRequests = receiver.getReceivedConnectionRequests();
         receivedConnectionRequests.remove(sender.getPeerId());
         receiver.setReceivedConnectionRequests(receivedConnectionRequests);
@@ -115,7 +115,7 @@ public class ConnectionServiceImpl implements ConnectionService {
 
     @Override
     public AcceptConnectionResponse acceptConnection(AcceptConnectionRequest request, HttpServletRequest httpRequest) {
-        PeerEntity receiver = peerUtil.getPeerFromHttpRequest(httpRequest);
+        PeerEntity receiver = commonUtil.getPeerFromHttpRequest(httpRequest);
         HashSet<String> receivedConnectionRequests = receiver.getReceivedConnectionRequests();
         receivedConnectionRequests.remove(request.getPeerId());
         receiver.setReceivedConnectionRequests(receivedConnectionRequests);
@@ -124,7 +124,7 @@ public class ConnectionServiceImpl implements ConnectionService {
         receiver.setConnections(receiverConnections);
         peerRepository.save(receiver);
 
-        PeerEntity sender = peerUtil.getPeerFromPeerId(request.getPeerId());
+        PeerEntity sender = commonUtil.getPeerFromPeerId(request.getPeerId());
         HashSet<String> sentConnectionRequests = sender.getSentConnectionRequests();
         sentConnectionRequests.remove(receiver.getPeerId());
         sender.setSentConnectionRequests(sentConnectionRequests);
@@ -140,13 +140,13 @@ public class ConnectionServiceImpl implements ConnectionService {
 
     @Override
     public RejectConnectionResponse rejectConnection(RejectConnectionRequest request, HttpServletRequest httpRequest) {
-        PeerEntity receiver = peerUtil.getPeerFromHttpRequest(httpRequest);
+        PeerEntity receiver = commonUtil.getPeerFromHttpRequest(httpRequest);
         HashSet<String> receivedConnectionRequests = receiver.getReceivedConnectionRequests();
         receivedConnectionRequests.remove(request.getPeerId());
         receiver.setReceivedConnectionRequests(receivedConnectionRequests);
         peerRepository.save(receiver);
 
-        PeerEntity sender = peerUtil.getPeerFromPeerId(request.getPeerId());
+        PeerEntity sender = commonUtil.getPeerFromPeerId(request.getPeerId());
         HashSet<String> sentConnectionRequests = sender.getSentConnectionRequests();
         sentConnectionRequests.remove(receiver.getPeerId());
         sender.setSentConnectionRequests(sentConnectionRequests);
@@ -159,13 +159,13 @@ public class ConnectionServiceImpl implements ConnectionService {
 
     @Override
     public DeleteConnectionResponse deleteConnection(DeleteConnectionRequest request, HttpServletRequest httpRequest) {
-        PeerEntity deleter = peerUtil.getPeerFromHttpRequest(httpRequest);
+        PeerEntity deleter = commonUtil.getPeerFromHttpRequest(httpRequest);
         HashSet<String> deleterConnections = deleter.getConnections();
         deleterConnections.remove(request.getPeerId());
         deleter.setConnections(deleterConnections);
         peerRepository.save(deleter);
 
-        PeerEntity otherParty = peerUtil.getPeerFromPeerId(request.getPeerId());
+        PeerEntity otherParty = commonUtil.getPeerFromPeerId(request.getPeerId());
         HashSet<String> otherPartyConnections = otherParty.getConnections();
         otherPartyConnections.remove(deleter.getPeerId());
         otherParty.setConnections(otherPartyConnections);
