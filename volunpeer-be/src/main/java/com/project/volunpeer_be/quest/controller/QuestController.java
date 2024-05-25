@@ -13,6 +13,7 @@ import com.project.volunpeer_be.quest.service.QuestService;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,7 +49,7 @@ public class QuestController {
         return response;
     }
 
-    @PostMapping("/quest-list")
+    @GetMapping("/quest-list")
     public QuestListResponse getAllQuests(HttpServletRequest httpServletRequest) {
         QuestListResponse response = new QuestListResponse();
         try {
