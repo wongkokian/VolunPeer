@@ -101,4 +101,15 @@ public class ConnectionController {
         }
         return response;
     }
+
+    @PostMapping("/potential")
+    public PotentialConnectionResponse getPotentialConnectionList(HttpServletRequest httpRequest) {
+        PotentialConnectionResponse response = new PotentialConnectionResponse();
+        try {
+            response = connectionService.getPotentialConnectionList(httpRequest);
+        } catch (Exception e) {
+            response.setStatusCode(StatusCode.FAILURE);
+        }
+        return response;
+    }
 }

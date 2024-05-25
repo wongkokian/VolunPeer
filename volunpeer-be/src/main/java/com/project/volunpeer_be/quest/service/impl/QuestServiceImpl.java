@@ -7,6 +7,7 @@ import com.project.volunpeer_be.common.util.CommonUtil;
 import com.project.volunpeer_be.common.util.KeyGeneratorUtil;
 import com.project.volunpeer_be.db.entity.QuestEntity;
 import com.project.volunpeer_be.db.repository.QuestRepository;
+import com.project.volunpeer_be.quest.dto.request.PeerQuestShiftRequest;
 import com.project.volunpeer_be.quest.dto.request.QuestCreateRequest;
 import com.project.volunpeer_be.quest.dto.request.QuestDetailsRequest;
 import com.project.volunpeer_be.quest.dto.response.PeerQuestShiftResponse;
@@ -68,7 +69,7 @@ public class QuestServiceImpl implements QuestService {
     }
 
     @Override
-    public PeerQuestShiftResponse assignQuestShift(QuestDetailsRequest request, HttpServletRequest httpServletRequest) {
+    public PeerQuestShiftResponse assignQuestShift(PeerQuestShiftRequest request, HttpServletRequest httpServletRequest) {
         String peerId = commonUtil.getPeerFromHttpRequest(httpServletRequest).getPeerId();
         PeerQuestShiftResponse response = new PeerQuestShiftResponse();
 
