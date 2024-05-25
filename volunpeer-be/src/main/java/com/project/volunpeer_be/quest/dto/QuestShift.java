@@ -13,4 +13,5 @@ public class QuestShift {
     private Integer totalSlots;
     private Integer filledSlots;
     private Integer isCompleted;
+    private Boolean isSelected = false;
 }
