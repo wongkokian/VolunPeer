@@ -24,6 +24,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 
 @Service
@@ -61,6 +63,12 @@ public class PeerServiceImpl implements PeerService {
         peerEntity.setConnections(new HashSet<>());
         peerEntity.setSentConnectionRequests(new HashSet<>());
         peerEntity.setReceivedConnectionRequests(new HashSet<>());
+
+        // Initialize points arraylist with with 23 zeros
+        Integer[] pointsArray = new Integer[23];
+        Arrays.fill(pointsArray, 0);
+        peerEntity.setPoints(Arrays.asList(pointsArray));
+
         peerRepository.save(peerEntity);
 
         PeerLoginEntity loginEntity = mapper.convertValue(request, PeerLoginEntity.class);
