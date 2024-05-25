@@ -1,5 +1,6 @@
 package com.project.volunpeer_be.quest.service;
 
+import com.project.volunpeer_be.quest.dto.request.PeerQuestShiftRequest;
 import com.project.volunpeer_be.quest.dto.request.QuestCreateRequest;
 import com.project.volunpeer_be.quest.dto.request.QuestDetailsRequest;
 import com.project.volunpeer_be.quest.dto.response.PeerQuestShiftResponse;
@@ -13,5 +14,5 @@ public interface QuestService {
 
     QuestDetailsResponse getQuestDetails(QuestDetailsRequest request);
 
-    PeerQuestShiftResponse assignQuestShift(QuestDetailsRequest request, HttpServletRequest httpServletRequest);
+    PeerQuestShiftResponse assignQuestShift(PeerQuestShiftRequest request, HttpServletRequest httpServletRequest);
 }
