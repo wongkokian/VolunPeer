@@ -193,34 +193,41 @@ public class ConnectionServiceImpl implements ConnectionService {
         PeerEntity peer = commonUtil.getPeerFromHttpRequest(httpRequest);
         List<PeerQuestShiftEntity> peerQuestShifts = peerQuestShiftRepository.findByPeerId(peer.getPeerId());
         PotentialConnectionResponse response = new PotentialConnectionResponse();
-        HashMap<PotentialConnection, List<String>> potentialConnections = new HashMap<>();
-        for(PeerQuestShiftEntity peerQuestShift : peerQuestShifts) {
+        HashMap<PotentialConnection, HashSet<String>> potentialConnections = new HashMap<>();
+        for (PeerQuestShiftEntity peerQuestShift : peerQuestShifts) {
             List<PeerQuestShiftEntity> connectionQuestShifts = peerQuestShiftRepository.findByQuestIdAndShiftNum(peerQuestShift.getQuestId(), peerQuestShift.getShiftNum());
-
+        
             for (PeerQuestShiftEntity connectionQuestShift : connectionQuestShifts) {
                 if (!connectionQuestShift.getPeerId().equals(peer.getPeerId())) {
                     PotentialConnection potentialConnection = new PotentialConnection();
                     PeerEntity potentialConnectionEntity = commonUtil.getPeerFromPeerId(connectionQuestShift.getPeerId());
                     potentialConnection.setPeerId(potentialConnectionEntity.getPeerId());
                     potentialConnection.setName(potentialConnectionEntity.getName());
-                    potentialConnections.put(potentialConnection, new ArrayList<>());
+                    
+                    // Initialize the list if this is a new potential connection
+                    potentialConnections.putIfAbsent(potentialConnection, new HashSet<>());
                 }
             }
-
+        
             for (PotentialConnection potentialConnection : potentialConnections.keySet()) {
-                for(PeerQuestShiftEntity peerQuestShiftEntity : connectionQuestShifts) {
-                    System.out.println(peerQuestShiftEntity.getQuestId());
-                    if(peerQuestShiftEntity.getPeerId().equals(potentialConnection.getPeerId())) {
+                for (PeerQuestShiftEntity peerQuestShiftEntity : connectionQuestShifts) {
+                    if (peerQuestShiftEntity.getPeerId().equals(potentialConnection.getPeerId())) {
                         Optional<QuestEntity> questEntity = questRepository.findById(new QuestEntity.Key(peerQuestShiftEntity.getQuestId()));
-                        List<String> list = potentialConnections.get(potentialConnection);
-                        System.out.println(list.toString());
-                        list.add(questEntity.get().getTitle());
-                        potentialConnections.put(potentialConnection, list);
+                        HashSet<String> list = potentialConnections.get(potentialConnection);
+                        
+                        // Only add the quest title if the quest entity is present
+                        questEntity.ifPresent(quest -> list.add(quest.getTitle()));
                     }
                 }
             }
         }
-        response.setPotentialConnections(potentialConnections);
+
+        List<PotentialConnection> resultList = new ArrayList<>();
+        for (PotentialConnection potentialConnection : potentialConnections.keySet()) {
+            potentialConnection.setQuests(potentialConnections.get(potentialConnection).stream().toList());
+            resultList.add(potentialConnection);
+        }
+        response.setPotentialConnections(resultList);
         response.setStatusCode(StatusCode.SUCCESS);
         return response;
     }
