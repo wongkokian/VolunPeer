@@ -36,16 +36,18 @@ public class AuthServiceImpl implements AuthService {
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-        ResponseCookie jwtCookie = jwtUtil.generateJwtCookie(userDetails);
+//        ResponseCookie jwtCookie = jwtUtil.generateJwtCookie(userDetails);
+
+        String token = jwtUtil.generateTokenFromUsername(request.getUsername());
 
         String role = userDetails.getAuthorities().stream()
                 .map(item -> item.getAuthority())
                 .collect(Collectors.toList()).getFirst();
 
-        LoginResponse response = new LoginResponse(role);
+        LoginResponse response = new LoginResponse(role, token);
         response.setStatusCode(StatusCode.SUCCESS);
 
-        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString()).body(response);
+        return ResponseEntity.ok().body(response);
     }
 
     @Override
