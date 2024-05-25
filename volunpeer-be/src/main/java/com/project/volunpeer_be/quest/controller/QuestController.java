@@ -4,10 +4,7 @@ import com.project.volunpeer_be.common.enums.StatusCode;
 import com.project.volunpeer_be.quest.dto.request.PeerQuestShiftRequest;
 import com.project.volunpeer_be.quest.dto.request.QuestCreateRequest;
 import com.project.volunpeer_be.quest.dto.request.QuestDetailsRequest;
-import com.project.volunpeer_be.quest.dto.response.QuestCreateResponse;
-import com.project.volunpeer_be.quest.dto.response.QuestDetailsResponse;
-import com.project.volunpeer_be.quest.dto.response.QuestListResponse;
-import com.project.volunpeer_be.quest.dto.response.PeerQuestShiftResponse;
+import com.project.volunpeer_be.quest.dto.response.*;
 import com.project.volunpeer_be.quest.service.QuestService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -66,6 +63,18 @@ public class QuestController {
         PeerQuestShiftResponse response = new PeerQuestShiftResponse();
         try {
             response = questService.assignQuestShift(request, httpServletRequest);
+        } catch (Exception e) {
+            System.out.println(e);
+            response.setStatusCode(StatusCode.FAILURE);
+        }
+        return response;
+    }
+
+    @GetMapping("/upcoming")
+    public UpcomingQuestListResponse getUpcomingQuests(HttpServletRequest httpServletRequest) {
+        UpcomingQuestListResponse response = new UpcomingQuestListResponse();
+        try {
+            response = questService.getUpcomingQuests(httpServletRequest);
         } catch (Exception e) {
             response.setStatusCode(StatusCode.FAILURE);
         }

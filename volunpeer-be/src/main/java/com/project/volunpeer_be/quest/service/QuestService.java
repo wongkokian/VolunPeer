@@ -3,10 +3,7 @@ package com.project.volunpeer_be.quest.service;
 import com.project.volunpeer_be.quest.dto.request.PeerQuestShiftRequest;
 import com.project.volunpeer_be.quest.dto.request.QuestCreateRequest;
 import com.project.volunpeer_be.quest.dto.request.QuestDetailsRequest;
-import com.project.volunpeer_be.quest.dto.response.PeerQuestShiftResponse;
-import com.project.volunpeer_be.quest.dto.response.QuestCreateResponse;
-import com.project.volunpeer_be.quest.dto.response.QuestDetailsResponse;
-import com.project.volunpeer_be.quest.dto.response.QuestListResponse;
+import com.project.volunpeer_be.quest.dto.response.*;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -18,4 +15,6 @@ public interface QuestService {
     QuestListResponse getAllQuests(HttpServletRequest httpServletRequest);
 
     PeerQuestShiftResponse assignQuestShift(PeerQuestShiftRequest request, HttpServletRequest httpServletRequest);
+
+    UpcomingQuestListResponse getUpcomingQuests(HttpServletRequest httpRequest);
 }

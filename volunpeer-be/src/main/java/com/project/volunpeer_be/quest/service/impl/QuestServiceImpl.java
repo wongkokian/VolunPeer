@@ -20,10 +20,7 @@ import com.project.volunpeer_be.quest.dto.QuestShift;
 import com.project.volunpeer_be.quest.dto.request.PeerQuestShiftRequest;
 import com.project.volunpeer_be.quest.dto.request.QuestCreateRequest;
 import com.project.volunpeer_be.quest.dto.request.QuestDetailsRequest;
-import com.project.volunpeer_be.quest.dto.response.PeerQuestShiftResponse;
-import com.project.volunpeer_be.quest.dto.response.QuestCreateResponse;
-import com.project.volunpeer_be.quest.dto.response.QuestDetailsResponse;
-import com.project.volunpeer_be.quest.dto.response.QuestListResponse;
+import com.project.volunpeer_be.quest.dto.response.*;
 import com.project.volunpeer_be.quest.service.QuestService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -283,6 +280,70 @@ public class QuestServiceImpl implements QuestService {
         quest.get().setMbtiTypes(currScores);
         questRepository.save(quest.get());
 
+        response.setStatusCode(StatusCode.SUCCESS);
+        return response;
+    }
+
+    @Override
+    public UpcomingQuestListResponse getUpcomingQuests(HttpServletRequest httpRequest) {
+        UpcomingQuestListResponse response = new UpcomingQuestListResponse();
+        String peerId = commonUtil.getPeerFromHttpRequest(httpRequest).getPeerId();
+        List<PeerQuestShiftEntity> peerQuestShifts = peerQuestShiftRepository.findByPeerId(peerId);
+        List<Quest> quests = new ArrayList<>();
+        for(PeerQuestShiftEntity peerQuestShift : peerQuestShifts) {
+            Optional<QuestEntity> questEntity = questRepository.findById(new QuestEntity.Key(peerQuestShift.getQuestId()));
+            if(questEntity.isEmpty()) {
+                response.setStatusCode(StatusCode.QUEST_DOES_NOT_EXIST);
+                return response;
+            }
+            Quest quest = new Quest();
+            quest.setTitle(questEntity.get().getTitle());
+            quest.setImageUrl(questEntity.get().getImageUrl());
+            quest.setLocationName(questEntity.get().getLocationName());
+            quest.setRelevantInterest(questEntity.get().getRelevantInterest());
+            Optional<OrganisationEntity> organisationEntity = organisationRepository.findById(new OrganisationEntity.Key(questEntity.get().getOrgId()));
+            if(organisationEntity.isEmpty()) {
+                response.setStatusCode(StatusCode.ORGANISATION_DOES_NOT_EXIST);
+                return response;
+            }
+            quest.setOrgName(organisationEntity.get().getName());
+            Optional<PeerEntity> peer = peerRepository.findById(new PeerEntity.Key(peerId));
+            if (peer.isEmpty()) {
+                response.setStatusCode(StatusCode.USER_DOES_NOT_EXIST);
+                return response;
+            }
+            String peerLocation = peer.get().getLocationCoordinates();
+            double distance = getDistanceInKM(peerLocation, questEntity.get().getLocationCoordinates());
+            String distanceStr = String.format("%.2f", distance);
+            quest.setDistance(distanceStr);
+            Integer numPeers = 0;
+            numPeers += questEntity.get().getMbtiTypes().get(0) + questEntity.get().getMbtiTypes().get(1);
+            quest.setNumRegistered(String.valueOf(numPeers));
+
+            // Process overall start datetime and end datetime after getting all quest shifts
+            List<QuestShiftEntity> questShiftEntities = questShiftRepository.findByQuestId(questEntity.get().getQuestId());
+            String startDateTime = null;
+            String endDateTime = null;
+            for (QuestShiftEntity questShiftEntity : questShiftEntities) {
+                LocalDateTime start = LocalDateTime.parse(questShiftEntity.getStartDateTime());
+                LocalDateTime end = LocalDateTime.parse(questShiftEntity.getEndDateTime());
+                if (startDateTime == null || start.isBefore(LocalDateTime.parse(startDateTime))) {
+                    startDateTime = questShiftEntity.getStartDateTime();
+                }
+                if (endDateTime == null || end.isAfter(LocalDateTime.parse(endDateTime))) {
+                    endDateTime = questShiftEntity.getEndDateTime();
+                }
+            }
+
+            // Parse start and end datetime to "SAT, APR 25 2024 4.00PM" format
+            startDateTime = formatDateTimeResponse(startDateTime);
+            endDateTime = formatDateTimeResponse(endDateTime);
+
+            quest.setStartDateTime(startDateTime);
+            quest.setEndDateTime(endDateTime);
+            quests.add(quest);
+        }
+        response.setUpcomingQuests(quests);
         response.setStatusCode(StatusCode.SUCCESS);
         return response;
     }
