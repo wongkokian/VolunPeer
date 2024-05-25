@@ -10,6 +10,7 @@ import com.project.volunpeer_be.db.entity.QuestShiftEntity;
 import com.project.volunpeer_be.db.repository.QuestRepository;
 import com.project.volunpeer_be.db.repository.QuestShiftRepository;
 import com.project.volunpeer_be.quest.dto.QuestShift;
+import com.project.volunpeer_be.quest.dto.request.PeerQuestShiftRequest;
 import com.project.volunpeer_be.quest.dto.request.QuestCreateRequest;
 import com.project.volunpeer_be.quest.dto.request.QuestDetailsRequest;
 import com.project.volunpeer_be.quest.dto.response.PeerQuestShiftResponse;
@@ -22,6 +23,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -77,20 +79,22 @@ public class QuestServiceImpl implements QuestService {
         }
 
         response = mapper.convertValue(questEntity.get(), QuestDetailsResponse.class);
+        List<QuestShift> questShifts = new ArrayList<>();
 
         // Get all quest shifts' details for the particular quest
         List<QuestShiftEntity> questShiftEntities = questShiftRepository.findByQuestId(request.getQuestId());
         for (QuestShiftEntity questShiftEntity : questShiftEntities) {
             QuestShift questShift = mapper.convertValue(questShiftEntity, QuestShift.class);
-            response.getQuestShifts().add(questShift);
+            questShifts.add(questShift);
         }
 
+        response.setQuestShifts(questShifts);
         response.setStatusCode(StatusCode.SUCCESS);
         return response;
     }
 
     @Override
-    public PeerQuestShiftResponse assignQuestShift(QuestDetailsRequest request, HttpServletRequest httpServletRequest) {
+    public PeerQuestShiftResponse assignQuestShift(PeerQuestShiftRequest request, HttpServletRequest httpServletRequest) {
         String peerId = commonUtil.getPeerFromHttpRequest(httpServletRequest).getPeerId();
         PeerQuestShiftResponse response = new PeerQuestShiftResponse();
 
@@ -101,17 +105,17 @@ public class QuestServiceImpl implements QuestService {
             return response;
         }
 
-        // Get Quest Shift details
-        Optional<QuestShiftEntity> questShiftEntity = questShiftRepository.findById(new QuestShiftEntity.Key(request.getQuestId(), request.getShiftNum()));
-        if (questShiftEntity.isEmpty()) {
-            response.setStatusCode(StatusCode.QUEST_SHIFT_DOES_NOT_EXIST);
-            return response;
-        }
-
-        // Assign Quest Shift to Peer
-        QuestShiftEntity questShiftEntity1 = questShiftEntity.get();
-        questShiftEntity1.setPeerId(request.getPeerId());
-        questShiftRepository.save(questShiftEntity1);
+//        // Get Quest Shift details
+//        Optional<QuestShiftEntity> questShiftEntity = questShiftRepository.findById(new QuestShiftEntity.Key(request.getQuestId(), request.getShiftNum()));
+//        if (questShiftEntity.isEmpty()) {
+//            response.setStatusCode(StatusCode.QUEST_SHIFT_DOES_NOT_EXIST);
+//            return response;
+//        }
+//
+//        // Assign Quest Shift to Peer
+//        QuestShiftEntity questShiftEntity1 = questShiftEntity.get();
+//        questShiftEntity1.setPeerId(request.getPeerId());
+//        questShiftRepository.save(questShiftEntity1);
 
         response.setStatusCode(StatusCode.SUCCESS);
         return response;

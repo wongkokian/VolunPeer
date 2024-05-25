@@ -11,7 +11,8 @@ public enum StatusCode {
     QUEST_DOES_NOT_EXIST("Quest does not exist", 503),
     INVALID_PERSONALITY("Invalid personality", 504),
     INVALID_INTEREST("Invalid interest", 505),
-    ORGANISATION_DOES_NOT_EXIST("Organisation does not exist", 506);
+    ORGANISATION_DOES_NOT_EXIST("Organisation does not exist", 506),
+    QUEST_SHIFT_DOES_NOT_EXIST("Quest shift does not exist", 507);
 
     private final String status;
     private final Integer code;
