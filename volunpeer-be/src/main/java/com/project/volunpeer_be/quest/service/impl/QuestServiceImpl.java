@@ -108,28 +108,39 @@ public class QuestServiceImpl implements QuestService {
         String peerId = commonUtil.getPeerFromHttpRequest(httpServletRequest).getPeerId();
         PeerQuestShiftResponse response = new PeerQuestShiftResponse();
 
-        Optional<QuestEntity> quest = questRepository.findById(new QuestEntity.Key(request.getQuestId()));
-        if (quest.isEmpty()) {
-            response.setStatusCode(StatusCode.QUEST_DOES_NOT_EXIST);
-            return response;
-        }
-
-        // For each shifts the user selected, add one PeerQuestShift entry into the DB, and update the
+        // Update PeerQuestShiftEntity and Quest-Shift collections
         for(Integer shiftNum : request.getShiftNums()) {
+            // For each shifts the user selected, add one PeerQuestShift entry into the DB            
             PeerQuestShiftEntity peerQuestShiftEntity = new PeerQuestShiftEntity();
             peerQuestShiftEntity.setQuestId(request.getQuestId());
             peerQuestShiftEntity.setPeerId(peerId);
             peerQuestShiftEntity.setShiftNum(shiftNum);
     
             peerQuestShiftRepository.save(peerQuestShiftEntity);
+
+            // Also update the slots filled for the quest-shift entry involved
+            Optional<QuestShiftEntity> questShiftEntity = questShiftRepository.findById(new QuestShiftEntity.Key(request.getQuestId(), shiftNum));
+            if (questShiftEntity.isEmpty()) {
+                response.setStatusCode(StatusCode.QUEST_SHIFT_DOES_NOT_EXIST);
+                return response;
+            }
+            questShiftEntity.get().setFilledSlots(questShiftEntity.get().getFilledSlots() + 1);
+            questShiftRepository.save(questShiftEntity.get());
         }
 
-        // Update QuestEntity with a new set of MBTI scores and update slots filled for involved quest shifts in the Quest entry
+        // Update QuestEntity with a new set of MBTI scores, which will require the relevant quest and peer entities
+        Optional<QuestEntity> quest = questRepository.findById(new QuestEntity.Key(request.getQuestId()));
+        if (quest.isEmpty()) {
+            response.setStatusCode(StatusCode.QUEST_DOES_NOT_EXIST);
+            return response;
+        }
         Optional<PeerEntity> peer = peerRepository.findById(new PeerEntity.Key(peerId));
         if (peer.isEmpty()) {
             response.setStatusCode(StatusCode.USER_DOES_NOT_EXIST);
             return response;
         }
+
+        List<Integer> currScores = quest.get().getMbtiTypes();
 
         String personality = peer.get().getPersonality();
         Integer[] scores = new Integer[8];
@@ -164,17 +175,13 @@ public class QuestServiceImpl implements QuestService {
             }
         }
 
-//        // Get Quest Shift details
-//        Optional<QuestShiftEntity> questShiftEntity = questShiftRepository.findById(new QuestShiftEntity.Key(request.getQuestId(), request.getShiftNum()));
-//        if (questShiftEntity.isEmpty()) {
-//            response.setStatusCode(StatusCode.QUEST_SHIFT_DOES_NOT_EXIST);
-//            return response;
-//        }
-//
-//        // Assign Quest Shift to Peer
-//        QuestShiftEntity questShiftEntity1 = questShiftEntity.get();
-//        questShiftEntity1.setPeerId(request.getPeerId());
-//        questShiftRepository.save(questShiftEntity1);
+        // Update the quest's MBTI scores
+        for (int i = 0; i < 8; i++) {
+            currScores.set(i, currScores.get(i) + scores[i]);
+        }
+
+        quest.get().setMbtiTypes(currScores);
+        questRepository.save(quest.get());
 
         response.setStatusCode(StatusCode.SUCCESS);
         return response;
