@@ -1,5 +1,9 @@
 package com.project.volunpeer_be.quest.dto.request;
 
+import java.util.List;
+
+import com.project.volunpeer_be.quest.dto.QuestShift;
+
 import lombok.Data;
 
 @Data
@@ -14,4 +18,6 @@ public class QuestCreateRequest {
     private String contactNum;
     private String contactEmail;
     private String imageUrl;
+
+    private List<QuestShift> questShifts;
 }

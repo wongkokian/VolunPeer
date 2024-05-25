@@ -1,8 +1,12 @@
 package com.project.volunpeer_be.quest.dto.response;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.project.volunpeer_be.common.dto.response.BaseResponse;
+import com.project.volunpeer_be.quest.dto.QuestShift;
+
 import lombok.Data;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -20,4 +24,6 @@ public class QuestDetailsResponse extends BaseResponse {
     private String contactEmail;
     private Integer numRegistered;
     private String imageUrl;
+
+    private List<QuestShift> questShifts;
 }
