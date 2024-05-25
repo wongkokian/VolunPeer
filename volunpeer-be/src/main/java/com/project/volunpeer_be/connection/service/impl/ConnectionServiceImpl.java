@@ -45,7 +45,7 @@ public class ConnectionServiceImpl implements ConnectionService {
         List<Connection> connectionList = new ArrayList<>();
         for (String connectionId : connectionIds) {
             PeerEntity connectionEntity = commonUtil.getPeerFromPeerId(connectionId);
-            Connection connection = new Connection(connectionId, connectionEntity.getName());
+            Connection connection = new Connection(connectionId, connectionEntity.getName(), connectionEntity.getPersonality());
             connectionList.add(connection);
         }
 
@@ -62,7 +62,7 @@ public class ConnectionServiceImpl implements ConnectionService {
         List<Connection> sentConnectionList = new ArrayList<>();
         for (String sentConnectionId : sentConnectionIds) {
             PeerEntity sentConnectionEntity = commonUtil.getPeerFromPeerId(sentConnectionId);
-            Connection sentConnection = new Connection(sentConnectionId, sentConnectionEntity.getName());
+            Connection sentConnection = new Connection(sentConnectionId, sentConnectionEntity.getName(), null);
             sentConnectionList.add(sentConnection);
         }
 
@@ -79,7 +79,7 @@ public class ConnectionServiceImpl implements ConnectionService {
         List<Connection> receivedConnectionList = new ArrayList<>();
         for (String receivedConnectionId : receivedConnectionIds) {
             PeerEntity receivedConnectionEntity = commonUtil.getPeerFromPeerId(receivedConnectionId);
-            Connection receivedConnection = new Connection(receivedConnectionId, receivedConnectionEntity.getName());
+            Connection receivedConnection = new Connection(receivedConnectionId, receivedConnectionEntity.getName(), null);
             receivedConnectionList.add(receivedConnection);
         }
 
@@ -232,7 +232,7 @@ public class ConnectionServiceImpl implements ConnectionService {
                     continue;
                 }
                 PeerEntity connectionEntity = commonUtil.getPeerFromPeerId(connectionQuestShift.getPeerId());
-                Connection connection = new Connection(connectionQuestShift.getPeerId(), connectionEntity.getName());
+                Connection connection = new Connection(connectionQuestShift.getPeerId(), connectionEntity.getName(), null);
                 connections.add(connection);
             }
             if(connections.isEmpty()) {
