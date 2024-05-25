@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class QuestShift {
-    private Integer shiftNum; // Id
+    private Integer shiftNum;
     private String startDateTime;
     private String endDateTime;
     private Integer totalSlots;

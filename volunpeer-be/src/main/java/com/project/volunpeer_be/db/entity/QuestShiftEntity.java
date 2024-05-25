@@ -6,30 +6,24 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.List;
-
 @Data
-@Document("Quests")
+@Document("Quest-Shifts")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class QuestEntity {
+public class QuestShiftEntity {
     @Id
     private Key id;
     private String questId;
-    private String orgId;
-    private String title;
-    private String description;
-    private String relevantInterest;
-    private String contactName;
-    private Integer contactNum;
-    private String contactEmail;
-    private List<Integer> mbtiTypes;
-    private String imageUrl;
-    private String locationCoordinates;
-    private String locationName;
+    private Integer shiftNum;
+    private String startDateTime;
+    private String endDateTime;
+    private Integer totalSlots;
+    private Integer filledSlots;
+    private Integer isCompleted;
 
     @Data
     @AllArgsConstructor
     public static class Key {
         private String questId;
+        private Integer shiftNum;
     }
 }

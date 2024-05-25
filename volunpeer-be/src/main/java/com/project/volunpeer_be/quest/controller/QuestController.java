@@ -29,6 +29,7 @@ public class QuestController {
         try {
             response = questService.createQuest(request);
         } catch (Exception e) {
+            System.out.println(e);
             response.setStatusCode(StatusCode.FAILURE);
         }
         return response;
@@ -40,6 +41,7 @@ public class QuestController {
         try {
             response = questService.getQuestDetails(request);
         } catch (Exception e) {
+            System.out.println(e);
             response.setStatusCode(StatusCode.FAILURE);
         }
         return response;

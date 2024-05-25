@@ -10,7 +10,10 @@ import com.project.volunpeer_be.db.entity.PeerQuestShiftEntity;
 import com.project.volunpeer_be.db.entity.QuestEntity;
 import com.project.volunpeer_be.db.repository.PeerQuestShiftRepository;
 import com.project.volunpeer_be.db.repository.PeerRepository;
+import com.project.volunpeer_be.db.entity.QuestShiftEntity;
 import com.project.volunpeer_be.db.repository.QuestRepository;
+import com.project.volunpeer_be.db.repository.QuestShiftRepository;
+import com.project.volunpeer_be.quest.dto.QuestShift;
 import com.project.volunpeer_be.quest.dto.request.PeerQuestShiftRequest;
 import com.project.volunpeer_be.quest.dto.request.QuestCreateRequest;
 import com.project.volunpeer_be.quest.dto.request.QuestDetailsRequest;
@@ -24,6 +27,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -36,6 +41,9 @@ public class QuestServiceImpl implements QuestService {
 
     @Autowired
     PeerRepository peerRepository;
+
+    @Autowired
+    QuestShiftRepository questShiftRepository;
 
     @Autowired
     CommonUtil commonUtil;
@@ -55,8 +63,15 @@ public class QuestServiceImpl implements QuestService {
         QuestEntity questEntity = mapper.convertValue(request, QuestEntity.class);
         questEntity.setId(new QuestEntity.Key(questId));
         questEntity.setQuestId(questId);
-        questEntity.setQuestShifts(request.getQuestShifts());
         questRepository.save(questEntity);
+
+        // Save each quest shift into database
+        for (QuestShift questShift : request.getQuestShifts()) {
+            QuestShiftEntity questShiftEntity = mapper.convertValue(questShift, QuestShiftEntity.class);
+            questShiftEntity.setQuestId(questId);
+            questShiftEntity.setId(new QuestShiftEntity.Key(questId, questShift.getShiftNum()));
+            questShiftRepository.save(questShiftEntity);
+        }
 
         response.setStatusCode(StatusCode.SUCCESS);
         return response;
@@ -74,6 +89,16 @@ public class QuestServiceImpl implements QuestService {
         }
 
         response = mapper.convertValue(questEntity.get(), QuestDetailsResponse.class);
+        List<QuestShift> questShifts = new ArrayList<>();
+
+        // Get all quest shifts' details for the particular quest
+        List<QuestShiftEntity> questShiftEntities = questShiftRepository.findByQuestId(request.getQuestId());
+        for (QuestShiftEntity questShiftEntity : questShiftEntities) {
+            QuestShift questShift = mapper.convertValue(questShiftEntity, QuestShift.class);
+            questShifts.add(questShift);
+        }
+
+        response.setQuestShifts(questShifts);
         response.setStatusCode(StatusCode.SUCCESS);
         return response;
     }
@@ -89,7 +114,7 @@ public class QuestServiceImpl implements QuestService {
             return response;
         }
 
-        // For each shifts the user selected, add one PeerQuestShift entry into the DB, and update the 
+        // For each shifts the user selected, add one PeerQuestShift entry into the DB, and update the
         for(Integer shiftNum : request.getShiftNums()) {
             PeerQuestShiftEntity peerQuestShiftEntity = new PeerQuestShiftEntity();
             peerQuestShiftEntity.setQuestId(request.getQuestId());
@@ -139,6 +164,17 @@ public class QuestServiceImpl implements QuestService {
             }
         }
 
+//        // Get Quest Shift details
+//        Optional<QuestShiftEntity> questShiftEntity = questShiftRepository.findById(new QuestShiftEntity.Key(request.getQuestId(), request.getShiftNum()));
+//        if (questShiftEntity.isEmpty()) {
+//            response.setStatusCode(StatusCode.QUEST_SHIFT_DOES_NOT_EXIST);
+//            return response;
+//        }
+//
+//        // Assign Quest Shift to Peer
+//        QuestShiftEntity questShiftEntity1 = questShiftEntity.get();
+//        questShiftEntity1.setPeerId(request.getPeerId());
+//        questShiftRepository.save(questShiftEntity1);
 
         response.setStatusCode(StatusCode.SUCCESS);
         return response;

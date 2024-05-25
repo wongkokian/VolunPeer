@@ -7,14 +7,8 @@ import com.project.volunpeer_be.connection.dto.PotentialConnections;
 import com.project.volunpeer_be.connection.dto.request.*;
 import com.project.volunpeer_be.connection.dto.response.*;
 import com.project.volunpeer_be.connection.service.ConnectionService;
-import com.project.volunpeer_be.db.entity.OrganisationEntity;
-import com.project.volunpeer_be.db.entity.PeerEntity;
-import com.project.volunpeer_be.db.entity.PeerQuestShiftEntity;
-import com.project.volunpeer_be.db.entity.QuestEntity;
-import com.project.volunpeer_be.db.repository.OrganisationRepository;
-import com.project.volunpeer_be.db.repository.PeerQuestShiftRepository;
-import com.project.volunpeer_be.db.repository.PeerRepository;
-import com.project.volunpeer_be.db.repository.QuestRepository;
+import com.project.volunpeer_be.db.entity.*;
+import com.project.volunpeer_be.db.repository.*;
 import com.project.volunpeer_be.quest.dto.QuestShift;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +29,9 @@ public class ConnectionServiceImpl implements ConnectionService {
 
     @Autowired
     QuestRepository questRepository;
+
+    @Autowired
+    QuestShiftRepository questShiftRepository;
 
     @Autowired
     OrganisationRepository organisationRepository;
@@ -218,14 +215,15 @@ public class ConnectionServiceImpl implements ConnectionService {
             }
             potentialConnections.setOrganisationName(organisationEntity.get().getName());
 
-            List<QuestShift> questShifts = questEntity.get().getQuestShifts();
-            for(QuestShift questShift : questShifts) {
-                if(questShift.getShiftNum().equals(peerQuestShift.getShiftNum())) {
-                    potentialConnections.setStartDateTime(questShift.getStartDateTime());
-                    potentialConnections.setEndDateTime(questShift.getEndDateTime());
-                    break;
-                }
+            Optional<QuestShiftEntity> questShiftEntity = questShiftRepository.findById(new QuestShiftEntity.Key(peerQuestShift.getQuestId(), peerQuestShift.getShiftNum()));
+            if(questShiftEntity.isEmpty()) {
+                response.setStatusCode(StatusCode.QUEST_SHIFT_DOES_NOT_EXIST);
+                return response;
             }
+            potentialConnections.setStartDateTime(questShiftEntity.get().getStartDateTime());
+            potentialConnections.setEndDateTime(questShiftEntity.get().getEndDateTime());
+            potentialConnections.setOrganisationName(organisationEntity.get().getName());
+
             List<Connection> connections = new ArrayList<>();
             for(PeerQuestShiftEntity connectionQuestShift : connectionQuestShifts) {
                 PeerEntity connectionEntity = commonUtil.getPeerFromPeerId(connectionQuestShift.getPeerId());
