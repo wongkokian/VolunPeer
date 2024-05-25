@@ -7,6 +7,7 @@ import com.project.volunpeer_be.db.entity.QuestEntity;
 import com.project.volunpeer_be.db.repository.PeerLoginRepository;
 import com.project.volunpeer_be.db.repository.PeerRepository;
 import com.project.volunpeer_be.db.repository.QuestRepository;
+import com.project.volunpeer_be.db.repository.QuestShiftRepository;
 import com.project.volunpeer_be.recommendation.dto.Recommendation;
 import com.project.volunpeer_be.recommendation.dto.response.RecommendationAllResponse;
 import com.project.volunpeer_be.recommendation.dto.response.RecommendationInterestResponse;
@@ -25,6 +26,8 @@ public class RecommendationServiceImpl implements RecommendationService {
     @Autowired
     QuestRepository questRepository;
     @Autowired
+    QuestShiftRepository questShiftRepository;
+    @Autowired
     CommonUtil commonUtil;
 
     @Override
@@ -36,20 +39,33 @@ public class RecommendationServiceImpl implements RecommendationService {
         // All Quests, need to change to quests that are not completed, maybe a filter
         List<QuestEntity> questEntity = questRepository.findAll();
         questEntity.forEach(quest -> {
+            System.out.println(quest.getQuestId());
             double score = getDistanceScore(peerEntity.getLocation(), quest.getLocationCoordinates())
                     + getInterestScore(peerEntity.getInterests(), quest.getRelevantInterest())
-                    + getPersonalityScore(peerEntity.getPersonality(), Arrays.asList(5, 5, 5, 5, 5, 5, 5, 5));
-            score = score / 3;
+                    + getPersonalityScore(peerEntity.getPersonality(), quest.getMbtiTypes());
+            score = (score / 3) * 10;
+            String string_score = String.valueOf(Math.round(score)) + "%";
             Recommendation recommendation = new Recommendation();
-            recommendation.setOrgName(commonUtil.getOrganisationFromOrganisationId(quest.getOrgId()).getName());
             recommendation.setTitle(quest.getTitle());
-            recommendation.setDescription(quest.getDescription());
-            recommendation.setScore(score);
+            recommendation.setOrgName(commonUtil.getOrganisationFromOrganisationId(quest.getOrgId()).getName());
+            recommendation.setLocation(quest.getLocationName());
+            List<String> shifts = new ArrayList<>();
+            questShiftRepository.findByQuestId(quest.getQuestId()).forEach(shift -> {
+                shifts.add(shift.getStartDateTime());
+            });
+            recommendation.setShifts(shifts);
+            recommendation.setImageUrl(quest.getImageUrl());
+            recommendation.setNumberGoing(String.valueOf(
+                    Math.round(getNumberOfParticipants(quest.getMbtiTypes()))));
+            recommendation.setScore(string_score);
             recommendation.setQuestId(quest.getQuestId());
+
+            recommendation.setDouble_score(score);
+            recommendation.setDescription(quest.getDescription());
             recommendation.setRelevantInterest(quest.getRelevantInterest());
             list_recs.add(recommendation);
         });
-        list_recs.sort(Comparator.comparingDouble(a -> a.getScore()));
+        list_recs.sort(Comparator.comparingDouble(a -> a.getDouble_score()));
         response.setRecommendations(list_recs);
         return response;
     }
@@ -63,19 +79,28 @@ public class RecommendationServiceImpl implements RecommendationService {
         // All Quests, need to change to quests that are not completed, maybe a filter
         List<QuestEntity> questEntity = questRepository.findAll();
         questEntity.forEach(quest -> {
-            double score = getDistanceScore(peerEntity.getLocation(), quest.getLocationCoordinates())
-                    + getInterestScore(peerEntity.getInterests(), quest.getRelevantInterest());
-            score = score / 2;
+            double score = getInterestScore(peerEntity.getInterests(), quest.getRelevantInterest()) * 10;
+            String string_score = String.valueOf(Math.round(score)) + "%";
             Recommendation recommendation = new Recommendation();
-            recommendation.setOrgName(commonUtil.getOrganisationFromOrganisationId(quest.getOrgId()).getName());
             recommendation.setTitle(quest.getTitle());
-            recommendation.setDescription(quest.getDescription());
-            recommendation.setScore(score);
+            recommendation.setOrgName(commonUtil.getOrganisationFromOrganisationId(quest.getOrgId()).getName());
+            recommendation.setLocation(quest.getLocationName());
+            List<String> shifts = new ArrayList<>();
+            questShiftRepository.findByQuestId(quest.getQuestId()).forEach(shift -> {
+                shifts.add(shift.getStartDateTime());
+            });
+            recommendation.setShifts(shifts);
+            recommendation.setImageUrl(quest.getImageUrl());
+            recommendation.setNumberGoing(String.valueOf(Math.round(getNumberOfParticipants(quest.getMbtiTypes()))));
+            recommendation.setScore(string_score);
             recommendation.setQuestId(quest.getQuestId());
+
+            recommendation.setDouble_score(score);
+            recommendation.setDescription(quest.getDescription());
             recommendation.setRelevantInterest(quest.getRelevantInterest());
             list_recs.add(recommendation);
         });
-        list_recs.sort(Comparator.comparingDouble(a -> a.getScore()));
+        list_recs.sort(Comparator.comparingDouble(a -> a.getDouble_score()));
         response.setRecommendations(list_recs);
         return response;
     }
@@ -89,19 +114,28 @@ public class RecommendationServiceImpl implements RecommendationService {
         // All Quests, need to change to quests that are not completed, maybe a filter
         List<QuestEntity> questEntity = questRepository.findAll();
         questEntity.forEach(quest -> {
-            double score = getDistanceScore(peerEntity.getLocation(), quest.getLocationCoordinates())
-                    + getPersonalityScore(peerEntity.getPersonality(), Arrays.asList(5, 5, 5, 5, 5, 5, 5, 5));
-
+            double score = getPersonalityScore(peerEntity.getPersonality(), quest.getMbtiTypes()) * 10;
+            String string_score = String.valueOf(Math.round(score)) + "%";
             Recommendation recommendation = new Recommendation();
-            recommendation.setOrgName(commonUtil.getOrganisationFromOrganisationId(quest.getOrgId()).getName());
             recommendation.setTitle(quest.getTitle());
-            recommendation.setDescription(quest.getDescription());
-            recommendation.setScore(score);
+            recommendation.setOrgName(commonUtil.getOrganisationFromOrganisationId(quest.getOrgId()).getName());
+            recommendation.setLocation(quest.getLocationName());
+            List<String> shifts = new ArrayList<>();
+            questShiftRepository.findByQuestId(quest.getQuestId()).forEach(shift -> {
+                shifts.add(shift.getStartDateTime());
+            });
+            recommendation.setShifts(shifts);
+            recommendation.setImageUrl(quest.getImageUrl());
+            recommendation.setNumberGoing(String.valueOf(Math.round(getNumberOfParticipants(quest.getMbtiTypes()))));
+            recommendation.setScore(string_score);
             recommendation.setQuestId(quest.getQuestId());
+
+            recommendation.setDouble_score(score);
+            recommendation.setDescription(quest.getDescription());
             recommendation.setRelevantInterest(quest.getRelevantInterest());
             list_recs.add(recommendation);
         });
-        list_recs.sort(Comparator.comparingDouble(a -> a.getScore()));
+        list_recs.sort(Comparator.comparingDouble(a -> a.getDouble_score()));
         response.setRecommendations(list_recs);
         return response;
     }
@@ -113,7 +147,7 @@ public class RecommendationServiceImpl implements RecommendationService {
         double score_1 = Math.sqrt(Math.pow(Double.parseDouble(peerLatLong[0]) -
                 Double.parseDouble(questLatLong[0]), 2)
                 + Math.pow(Double.parseDouble(peerLatLong[1]) -
-                Double.parseDouble(questLatLong[1]), 2))
+                        Double.parseDouble(questLatLong[1]), 2))
                 * 10 / maxDistance;
         double score = 10 * Math.exp(-1 * score_1);
         System.out.println("Distance Score: " + score);
@@ -134,8 +168,11 @@ public class RecommendationServiceImpl implements RecommendationService {
     private double getPersonalityScore(String userPersonality, List<Integer> questPersonality) {
         // 0E 1I 2S 3N 4T 5F 6J 7P
         double score = 0;
-        double total_participants = questPersonality.get(0) +
-                questPersonality.get(1);
+        double total_participants = getNumberOfParticipants(questPersonality);
+        if (total_participants == 0.0) {
+            System.out.println("No participants");
+            return 5.0;
+        }
         for (int i = 0; i < userPersonality.length(); i++) {
             char c = userPersonality.charAt(i);
             switch (c) {
@@ -166,10 +203,13 @@ public class RecommendationServiceImpl implements RecommendationService {
                 default:
                     System.out.println("Error in personality scoring");
             }
-
         }
         score = score * 10 / 4;
         System.out.println("Personality Score: " + score);
         return score;
+    }
+
+    private double getNumberOfParticipants(List<Integer> questPersonality) {
+        return questPersonality.get(0) + questPersonality.get(1);
     }
 }
