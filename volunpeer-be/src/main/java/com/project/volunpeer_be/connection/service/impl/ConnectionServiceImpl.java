@@ -3,6 +3,7 @@ package com.project.volunpeer_be.connection.service.impl;
 import com.project.volunpeer_be.common.enums.StatusCode;
 import com.project.volunpeer_be.common.util.CommonUtil;
 import com.project.volunpeer_be.connection.dto.Connection;
+import com.project.volunpeer_be.connection.dto.PotentialConnection;
 import com.project.volunpeer_be.connection.dto.PotentialConnectionShift;
 import com.project.volunpeer_be.connection.dto.request.*;
 import com.project.volunpeer_be.connection.dto.response.*;
@@ -13,10 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class ConnectionServiceImpl implements ConnectionService {
@@ -195,53 +193,34 @@ public class ConnectionServiceImpl implements ConnectionService {
         PeerEntity peer = commonUtil.getPeerFromHttpRequest(httpRequest);
         List<PeerQuestShiftEntity> peerQuestShifts = peerQuestShiftRepository.findByPeerId(peer.getPeerId());
         PotentialConnectionResponse response = new PotentialConnectionResponse();
-        List<PotentialConnectionShift> potentialConnectionShiftList = new ArrayList<>();
+        HashMap<PotentialConnection, List<String>> potentialConnections = new HashMap<>();
         for(PeerQuestShiftEntity peerQuestShift : peerQuestShifts) {
             List<PeerQuestShiftEntity> connectionQuestShifts = peerQuestShiftRepository.findByQuestIdAndShiftNum(peerQuestShift.getQuestId(), peerQuestShift.getShiftNum());
-            PotentialConnectionShift potentialConnectionShift = new PotentialConnectionShift();
 
-            Optional<QuestEntity> questEntity = questRepository.findById(new QuestEntity.Key(peerQuestShift.getQuestId()));
-            if(questEntity.isEmpty()) {
-                response.setStatusCode(StatusCode.QUEST_DOES_NOT_EXIST);
-                return response;
-            }
-            potentialConnectionShift.setQuestTitle(questEntity.get().getTitle());
-
-            Optional<OrganisationEntity> organisationEntity = organisationRepository.findById(new OrganisationEntity.Key(questEntity.get().getOrgId()));
-            if(organisationEntity.isEmpty()) {
-                response.setStatusCode(StatusCode.ORGANISATION_DOES_NOT_EXIST);
-                return response;
-            }
-            potentialConnectionShift.setOrganisationName(organisationEntity.get().getName());
-
-            Optional<QuestShiftEntity> questShiftEntity = questShiftRepository.findById(new QuestShiftEntity.Key(peerQuestShift.getQuestId(), peerQuestShift.getShiftNum()));
-            if(questShiftEntity.isEmpty()) {
-                response.setStatusCode(StatusCode.QUEST_SHIFT_DOES_NOT_EXIST);
-                return response;
-            }
-            if(questShiftEntity.get().getIsCompleted().equals(0)) {
-                continue;
-            }
-            potentialConnectionShift.setStartDateTime(questShiftEntity.get().getStartDateTime());
-            potentialConnectionShift.setEndDateTime(questShiftEntity.get().getEndDateTime());
-            potentialConnectionShift.setOrganisationName(organisationEntity.get().getName());
-
-            List<Connection> connections = new ArrayList<>();
-            for(PeerQuestShiftEntity connectionQuestShift : connectionQuestShifts) {
-                if(connectionQuestShift.getPeerId().equals(peer.getPeerId())) {
-                    continue;
+            for (PeerQuestShiftEntity connectionQuestShift : connectionQuestShifts) {
+                if (!connectionQuestShift.getPeerId().equals(peer.getPeerId())) {
+                    PotentialConnection potentialConnection = new PotentialConnection();
+                    PeerEntity potentialConnectionEntity = commonUtil.getPeerFromPeerId(connectionQuestShift.getPeerId());
+                    potentialConnection.setPeerId(potentialConnectionEntity.getPeerId());
+                    potentialConnection.setName(potentialConnectionEntity.getName());
+                    potentialConnections.put(potentialConnection, new ArrayList<>());
                 }
-                PeerEntity connectionEntity = commonUtil.getPeerFromPeerId(connectionQuestShift.getPeerId());
-                Connection connection = new Connection(connectionQuestShift.getPeerId(), connectionEntity.getName(), null);
-                connections.add(connection);
             }
-            if(connections.isEmpty()) {
-                continue;
+
+            for (PotentialConnection potentialConnection : potentialConnections.keySet()) {
+                for(PeerQuestShiftEntity peerQuestShiftEntity : connectionQuestShifts) {
+                    System.out.println(peerQuestShiftEntity.getQuestId());
+                    if(peerQuestShiftEntity.getPeerId().equals(potentialConnection.getPeerId())) {
+                        Optional<QuestEntity> questEntity = questRepository.findById(new QuestEntity.Key(peerQuestShiftEntity.getQuestId()));
+                        List<String> list = potentialConnections.get(potentialConnection);
+                        System.out.println(list.toString());
+                        list.add(questEntity.get().getTitle());
+                        potentialConnections.put(potentialConnection, list);
+                    }
+                }
             }
-            potentialConnectionShift.setPotentialConnections(connections);
-            potentialConnectionShiftList.add(potentialConnectionShift);
         }
-        response.setShifts(potentialConnectionShiftList);
+        response.setPotentialConnections(potentialConnections);
         response.setStatusCode(StatusCode.SUCCESS);
         return response;
     }
