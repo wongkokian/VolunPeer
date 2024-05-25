@@ -40,7 +40,7 @@ public class RecommendationServiceImpl implements RecommendationService {
         List<QuestEntity> questEntity = questRepository.findAll();
         questEntity.forEach(quest -> {
             System.out.println(quest.getQuestId());
-            double score = getDistanceScore(peerEntity.getLocation(), quest.getLocationCoordinates())
+            double score = getDistanceScore(peerEntity.getLocationCoordinates(), quest.getLocationCoordinates())
                     + getInterestScore(peerEntity.getInterests(), quest.getRelevantInterest())
                     + getPersonalityScore(peerEntity.getPersonality(), quest.getMbtiTypes());
             score = (score / 3) * 10;

@@ -126,7 +126,7 @@ public class QuestServiceImpl implements QuestService {
             response.setStatusCode(StatusCode.USER_DOES_NOT_EXIST);
             return response;
         }
-        String peerLocation = peer.get().getLocation();
+        String peerLocation = peer.get().getLocationCoordinates();
 
         List<Quest> quests = new ArrayList<>();
 
@@ -150,6 +150,7 @@ public class QuestServiceImpl implements QuestService {
             // Process number of peers registered
             Integer numPeers = 0;
             numPeers += questEntity.getMbtiTypes().get(0) + questEntity.getMbtiTypes().get(1);
+            quest.setNumRegistered(String.valueOf(numPeers));
 
             // Process overall start datetime and end datetime after getting all quest shifts
             List<QuestShiftEntity> questShiftEntities = questShiftRepository.findByQuestId(questEntity.getQuestId());
@@ -205,11 +206,9 @@ public class QuestServiceImpl implements QuestService {
     }
 
     private String formatDateTimeResponse(String dateTime) {
-        DateTimeFormatter inputFormatter = DateTimeFormatter.ISO_ZONED_DATE_TIME;
-        ZonedDateTime zonedDateTime = ZonedDateTime.parse(dateTime, inputFormatter);
-
+        LocalDateTime localDateTime = LocalDateTime.parse(dateTime);
         DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("EEE, MMM dd yyyy h.mma");
-        return zonedDateTime.format(outputFormatter);
+        return localDateTime.format(outputFormatter);
     }
 
     @Override
