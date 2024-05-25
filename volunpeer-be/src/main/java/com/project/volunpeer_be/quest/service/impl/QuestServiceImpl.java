@@ -63,6 +63,7 @@ public class QuestServiceImpl implements QuestService {
         QuestEntity questEntity = mapper.convertValue(request, QuestEntity.class);
         questEntity.setId(new QuestEntity.Key(questId));
         questEntity.setQuestId(questId);
+        questEntity.setMbtiTypes(new ArrayList<>(List.of(0, 0, 0, 0, 0, 0, 0, 0)));
         questRepository.save(questEntity);
 
         // Save each quest shift into database
@@ -141,44 +142,36 @@ public class QuestServiceImpl implements QuestService {
             return response;
         }
 
+        // Update the quest's MBTI scores
         List<Integer> currScores = quest.get().getMbtiTypes();
-
         String personality = peer.get().getPersonality();
-        Integer[] scores = new Integer[8];
         for (char c : personality.toCharArray()) {
             switch (c) {
-                case 'I':
-                    scores[0] = scores[0] + 1;
-                    break;
                 case 'E':
-                    scores[1] = scores[1] + 1;
+                    currScores.set(0, currScores.get(0) + 1);
                     break;
-                case 'N':
-                    scores[2] = scores[2] + 1;
+                case 'I':
+                    currScores.set(1, currScores.get(1) + 1);
                     break;
                 case 'S':
-                    scores[3] = scores[3] + 1;
+                    currScores.set(2, currScores.get(2) + 1);
                     break;
-                case 'F':
-                    scores[4] = scores[4] + 1;
+                case 'N':
+                    currScores.set(3, currScores.get(3) + 1);
                     break;
                 case 'T':
-                    scores[5] = scores[5] + 1;
+                    currScores.set(4, currScores.get(4) + 1);
                     break;
-                case 'P':
-                    scores[6] = scores[6] + 1;
+                case 'F':
+                    currScores.set(5, currScores.get(5) + 1);
                     break;
                 case 'J':
-                    scores[7] = scores[7] + 1;
+                    currScores.set(6, currScores.get(6) + 1);
                     break;
-                default:
+                case 'P':
+                    currScores.set(7, currScores.get(7) + 1);
                     break;
             }
-        }
-
-        // Update the quest's MBTI scores
-        for (int i = 0; i < 8; i++) {
-            currScores.set(i, currScores.get(i) + scores[i]);
         }
 
         quest.get().setMbtiTypes(currScores);
