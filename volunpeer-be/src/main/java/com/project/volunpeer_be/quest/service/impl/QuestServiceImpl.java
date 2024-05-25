@@ -79,6 +79,8 @@ public class QuestServiceImpl implements QuestService {
             QuestShiftEntity questShiftEntity = mapper.convertValue(questShift, QuestShiftEntity.class);
             questShiftEntity.setQuestId(questId);
             questShiftEntity.setId(new QuestShiftEntity.Key(questId, questShift.getShiftNum()));
+            questShiftEntity.setStartDateTime(questShift.getStartDateTime());
+            questShiftEntity.setEndDateTime(questShift.getEndDateTime());
             questShiftRepository.save(questShiftEntity);
         }
 
@@ -113,8 +115,23 @@ public class QuestServiceImpl implements QuestService {
         List<QuestShiftEntity> questShiftEntities = questShiftRepository.findByQuestId(request.getQuestId());
         for (QuestShiftEntity questShiftEntity : questShiftEntities) {
             QuestShift questShift = mapper.convertValue(questShiftEntity, QuestShift.class);
-            questShift.setStartDateTime(questShiftEntity.getStartDateTime());
-            questShift.setEndDateTime(questShiftEntity.getEndDateTime());
+
+            //set date
+            DateTimeFormatter outputDateFormatter = DateTimeFormatter.ofPattern("EEE, MMM dd yyyy");
+            LocalDateTime dateTime = LocalDateTime.parse(questShiftEntity.getStartDateTime());
+            questShift.setDate(dateTime.format(outputDateFormatter));
+
+            DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("hh:mm a");
+
+            //set start time
+            LocalDateTime localStartDateTime = LocalDateTime.parse(questShiftEntity.getStartDateTime());
+            String startDateTime = localStartDateTime.format(outputFormatter);
+            questShift.setStartDateTime(startDateTime);
+
+            // set end time
+            LocalDateTime localEndDateTime = LocalDateTime.parse(questShiftEntity.getEndDateTime());
+            String endDateTime = localEndDateTime.format(outputFormatter);
+            questShift.setEndDateTime(endDateTime);
 
             questShifts.add(questShift);
         }
@@ -141,6 +158,7 @@ public class QuestServiceImpl implements QuestService {
         // Get all quests and process each fields we need in the response
         List<QuestEntity> questEntities = questRepository.findAll();
         for (QuestEntity questEntity : questEntities) {
+
             // Calculate distance from user
             Quest quest = mapper.convertValue(questEntity, Quest.class);
             double distance = getDistanceInKM(peerLocation, questEntity.getLocationCoordinates());
@@ -164,7 +182,9 @@ public class QuestServiceImpl implements QuestService {
             List<QuestShiftEntity> questShiftEntities = questShiftRepository.findByQuestId(questEntity.getQuestId());
             String startDateTime = null;
             String endDateTime = null;
+
             for (QuestShiftEntity questShiftEntity : questShiftEntities) {
+
                 LocalDateTime start = LocalDateTime.parse(questShiftEntity.getStartDateTime());
                 LocalDateTime end = LocalDateTime.parse(questShiftEntity.getEndDateTime());
                 if (startDateTime == null || start.isBefore(LocalDateTime.parse(startDateTime))) {
@@ -174,13 +194,13 @@ public class QuestServiceImpl implements QuestService {
                     endDateTime = questShiftEntity.getEndDateTime();
                 }
             }
-
             // Parse start and end datetime to "SAT, APR 25 2024 4.00PM" format
             startDateTime = formatDateTimeResponse(startDateTime);
             endDateTime = formatDateTimeResponse(endDateTime);
 
             quest.setStartDateTime(startDateTime);
             quest.setEndDateTime(endDateTime);
+
 
             quests.add(quest);
         }
