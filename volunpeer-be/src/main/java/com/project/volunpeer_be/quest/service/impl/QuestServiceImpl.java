@@ -115,6 +115,7 @@ public class QuestServiceImpl implements QuestService {
             peerQuestShiftEntity.setQuestId(request.getQuestId());
             peerQuestShiftEntity.setPeerId(peerId);
             peerQuestShiftEntity.setShiftNum(shiftNum);
+            peerQuestShiftEntity.setId(new PeerQuestShiftEntity.Key(peerId, request.getQuestId(), shiftNum));
     
             peerQuestShiftRepository.save(peerQuestShiftEntity);
 
