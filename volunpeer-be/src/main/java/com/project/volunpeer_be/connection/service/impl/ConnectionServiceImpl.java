@@ -193,7 +193,7 @@ public class ConnectionServiceImpl implements ConnectionService {
         PeerEntity peer = commonUtil.getPeerFromHttpRequest(httpRequest);
         List<PeerQuestShiftEntity> peerQuestShifts = peerQuestShiftRepository.findByPeerId(peer.getPeerId());
         PotentialConnectionResponse response = new PotentialConnectionResponse();
-        HashMap<PotentialConnection, List<String>> potentialConnections = new HashMap<>();
+        HashMap<PotentialConnection, HashSet<String>> potentialConnections = new HashMap<>();
         for (PeerQuestShiftEntity peerQuestShift : peerQuestShifts) {
             List<PeerQuestShiftEntity> connectionQuestShifts = peerQuestShiftRepository.findByQuestIdAndShiftNum(peerQuestShift.getQuestId(), peerQuestShift.getShiftNum());
         
@@ -205,7 +205,7 @@ public class ConnectionServiceImpl implements ConnectionService {
                     potentialConnection.setName(potentialConnectionEntity.getName());
                     
                     // Initialize the list if this is a new potential connection
-                    potentialConnections.putIfAbsent(potentialConnection, new ArrayList<>());
+                    potentialConnections.putIfAbsent(potentialConnection, new HashSet<>());
                 }
             }
         
@@ -213,7 +213,7 @@ public class ConnectionServiceImpl implements ConnectionService {
                 for (PeerQuestShiftEntity peerQuestShiftEntity : connectionQuestShifts) {
                     if (peerQuestShiftEntity.getPeerId().equals(potentialConnection.getPeerId())) {
                         Optional<QuestEntity> questEntity = questRepository.findById(new QuestEntity.Key(peerQuestShiftEntity.getQuestId()));
-                        List<String> list = potentialConnections.get(potentialConnection);
+                        HashSet<String> list = potentialConnections.get(potentialConnection);
                         
                         // Only add the quest title if the quest entity is present
                         questEntity.ifPresent(quest -> list.add(quest.getTitle()));
@@ -221,7 +221,13 @@ public class ConnectionServiceImpl implements ConnectionService {
                 }
             }
         }
-        response.setPotentialConnections(potentialConnections);
+
+        List<PotentialConnection> resultList = new ArrayList<>();
+        for (PotentialConnection potentialConnection : potentialConnections.keySet()) {
+            potentialConnection.setQuests(potentialConnections.get(potentialConnection).stream().toList());
+            resultList.add(potentialConnection);
+        }
+        response.setPotentialConnections(resultList);
         response.setStatusCode(StatusCode.SUCCESS);
         return response;
     }
