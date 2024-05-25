@@ -13,7 +13,7 @@ public class QuestShiftEntity {
     @Id
     private Key id;
     private String questId;
-    private String shiftNum;
+    private Integer shiftNum;
     private String startDateTime;
     private String endDateTime;
     private Integer totalSlots;
@@ -24,6 +24,6 @@ public class QuestShiftEntity {
     @AllArgsConstructor
     public static class Key {
         private String questId;
-        private String shiftNum;
+        private Integer shiftNum;
     }
 }
