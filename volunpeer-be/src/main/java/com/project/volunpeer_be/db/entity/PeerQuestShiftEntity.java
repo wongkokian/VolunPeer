@@ -14,13 +14,13 @@ public class PeerQuestShiftEntity {
     private Key id;
     private String peerId;
     private String questId;
-    private String shiftNum;
+    private Integer shiftNum;
 
     @Data
     @AllArgsConstructor
     public static class Key {
         private String peerId;
         private String questId;
-        private String shiftNum;
+        private Integer shiftNum;
     }
 }

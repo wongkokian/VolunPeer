@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class QuestShift {
-    private String shiftNum;
+    private Integer shiftNum;
     private String startDateTime;
     private String endDateTime;
     private Integer totalSlots;
