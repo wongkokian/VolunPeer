@@ -132,8 +132,9 @@ public class QuestServiceImpl implements QuestService {
         for (QuestEntity questEntity : questEntities) {
             // Calculate distance from user
             Quest quest = mapper.convertValue(questEntity, Quest.class);
-            double distance = getDistance(peerLocation, questEntity.getLocationCoordinates());
-            quest.setDistance(distance);
+            double distance = getDistanceInKM(peerLocation, questEntity.getLocationCoordinates());
+            String distanceStr = String.format("%.2f", distance);
+            quest.setDistance(distanceStr);
 
             // Process org name
             Optional<OrganisationEntity> org = organisationRepository.findById(new OrganisationEntity.Key(questEntity.getOrgId()));
@@ -150,7 +151,7 @@ public class QuestServiceImpl implements QuestService {
         return response;
     }
 
-    private double getDistance(String peerLocation, String questLocation) {
+    private double getDistanceInKM(String peerLocation, String questLocation) {
         String[] peerLatLong = peerLocation.split(",");
         String[] questLatLong = questLocation.split(",");
 
@@ -159,7 +160,7 @@ public class QuestServiceImpl implements QuestService {
         double questLat = Double.parseDouble(questLatLong[0]);
         double questLong = Double.parseDouble(questLatLong[1]);
 
-        return haversineDistance(peerLat, peerLong, questLat, questLong);
+        return haversineDistance(peerLat, peerLong, questLat, questLong) / 1000;
     }
 
     private double haversineDistance(double lat1, double lon1, double lat2, double lon2) {

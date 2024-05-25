@@ -9,7 +9,7 @@ public class Quest {
     private String orgName;
     private String title;
     private String relevantInterest;
-    private double distance;
+    private String distance;
     private String locationName;
     private String imageUrl;
 }
