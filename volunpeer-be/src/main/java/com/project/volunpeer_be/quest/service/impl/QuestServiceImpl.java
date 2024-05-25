@@ -100,6 +100,15 @@ public class QuestServiceImpl implements QuestService {
         }
 
         response = mapper.convertValue(questEntity.get(), QuestDetailsResponse.class);
+
+        // Process org name
+        Optional<OrganisationEntity> org = organisationRepository.findById(new OrganisationEntity.Key(questEntity.get().getOrgId()));
+        if (org.isEmpty()) {
+            response.setStatusCode(StatusCode.ORGANISATION_DOES_NOT_EXIST);
+            return response;
+        }
+        response.setOrgName(org.get().getName());
+
         List<QuestShift> questShifts = new ArrayList<>();
 
         // Get all quest shifts' details for the particular quest

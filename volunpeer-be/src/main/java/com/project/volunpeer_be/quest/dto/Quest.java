@@ -6,6 +6,7 @@ import lombok.Data;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Quest {
+    private String questId;
     private String orgName;
     private String title;
     private String relevantInterest;
