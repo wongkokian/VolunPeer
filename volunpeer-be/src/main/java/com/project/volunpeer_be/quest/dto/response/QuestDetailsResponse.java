@@ -5,19 +5,19 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.project.volunpeer_be.common.dto.response.BaseResponse;
 import lombok.Data;
 
-import java.util.List;
-
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
 public class QuestDetailsResponse extends BaseResponse {
-    private String orgId;
+    private String orgName;
     private String title;
     private String description;
-    private List<String> relevantInterests;
+    private String relevantInterest;
+    private String locationCoordinates;
+    private String locationName;
     private String contactName;
-    private String contactNum;
+    private Integer contactNum;
     private String contactEmail;
-    private List<Integer> mbtiTypes;
-    private int numRegistered;
+    private Integer numRegistered;
+    private String imageUrl;
 }

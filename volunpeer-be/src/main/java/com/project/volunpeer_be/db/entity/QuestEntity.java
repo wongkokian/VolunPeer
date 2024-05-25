@@ -18,13 +18,14 @@ public class QuestEntity {
     private String orgId;
     private String title;
     private String description;
-    private List<String> relevantInterests;
+    private String relevantInterest;
     private String contactName;
-    private String contactNum;
+    private Integer contactNum;
     private String contactEmail;
     private List<Integer> mbtiTypes;
-    private int numRegistered;
     private String imageUrl;
+    private String locationCoordinates;
+    private String locationName;
 
     @Data
     @AllArgsConstructor
