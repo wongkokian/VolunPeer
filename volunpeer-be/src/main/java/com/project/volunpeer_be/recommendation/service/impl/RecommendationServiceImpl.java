@@ -63,6 +63,7 @@ public class RecommendationServiceImpl implements RecommendationService {
             list_recs.add(recommendation);
         });
         list_recs.sort(Comparator.comparingDouble(a -> a.getDouble_score()));
+        Collections.reverse(list_recs);
         response.setRecommendations(list_recs);
         return response;
     }
@@ -99,6 +100,7 @@ public class RecommendationServiceImpl implements RecommendationService {
             list_recs.add(recommendation);
         });
         list_recs.sort(Comparator.comparingDouble(a -> a.getDouble_score()));
+        Collections.reverse(list_recs);
         response.setRecommendations(list_recs);
         return response;
     }
@@ -135,6 +137,7 @@ public class RecommendationServiceImpl implements RecommendationService {
             list_recs.add(recommendation);
         });
         list_recs.sort(Comparator.comparingDouble(a -> a.getDouble_score()));
+        Collections.reverse(list_recs);
         response.setRecommendations(list_recs);
         return response;
     }
