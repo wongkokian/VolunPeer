@@ -9,10 +9,9 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PotentialConnections {
-    private String organisationName;
-    private String questTitle;
+public class ConnectionUpcomingQuestShift {
     private String startDateTime;
     private String endDateTime;
-    private List<Connection> potentialConnections;
+    private Integer availableSlots;
+    private List<String> attendingConnections;
 }
