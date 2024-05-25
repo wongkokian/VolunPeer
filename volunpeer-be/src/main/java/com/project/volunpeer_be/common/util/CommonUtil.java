@@ -28,7 +28,7 @@ public class CommonUtil {
     OrganisationRepository organisationRepository;
 
     public PeerEntity getPeerFromHttpRequest(HttpServletRequest httpRequest) {
-        String token = jwtUtil.getJwtFromCookies(httpRequest);
+        String token = jwtUtil.getJwtFromHeader(httpRequest);
         String username = jwtUtil.getUserNameFromJwtToken(token);
         Optional<PeerLoginEntity> peerLoginEntity = peerLoginRepository.findByUsername(username);
         if (peerLoginEntity.isEmpty()) {

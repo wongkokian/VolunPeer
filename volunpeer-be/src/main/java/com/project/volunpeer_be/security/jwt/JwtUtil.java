@@ -29,13 +29,14 @@ public class JwtUtil {
     @Value("${volunpeer.app.jwtCookieName}")
     private String jwtCookie;
 
-    public String getJwtFromCookies(HttpServletRequest request) {
-        Cookie cookie = WebUtils.getCookie(request, jwtCookie);
-        if (cookie != null) {
-            return cookie.getValue();
-        } else {
-            return null;
-        }
+    public String getJwtFromHeader(HttpServletRequest request) {
+//        Cookie cookie = WebUtils.getCookie(request, jwtCookie);
+//        if (cookie != null) {
+//            return cookie.getValue();
+//        } else {
+//            return null;
+//        }
+        return request.getHeader("token");
     }
 
     public ResponseCookie generateJwtCookie(UserDetailsImpl userPrincipal) {

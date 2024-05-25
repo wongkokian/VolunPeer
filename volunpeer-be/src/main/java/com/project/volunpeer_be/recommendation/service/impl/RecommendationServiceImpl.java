@@ -25,18 +25,12 @@ public class RecommendationServiceImpl implements RecommendationService {
     @Autowired
     QuestRepository questRepository;
     @Autowired
-    PeerRepository peerRepository;
-    @Autowired
-    PeerLoginRepository peerLoginRepository;
-    @Autowired
-    JwtUtil jwtUtil;
-    @Autowired
     CommonUtil commonUtil;
 
     @Override
     public RecommendationAllResponse getAllRecommendation(HttpServletRequest httpRequest) {
         RecommendationAllResponse response = new RecommendationAllResponse();
-        PeerEntity peerEntity = getPeerFromHttpRequest(httpRequest);
+        PeerEntity peerEntity = commonUtil.getPeerFromHttpRequest(httpRequest);
         List<Recommendation> list_recs = new ArrayList<>();
 
         // All Quests, need to change to quests that are not completed, maybe a filter
@@ -63,7 +57,7 @@ public class RecommendationServiceImpl implements RecommendationService {
     @Override
     public RecommendationInterestResponse getInterestRecommendation(HttpServletRequest httpRequest) {
         RecommendationInterestResponse response = new RecommendationInterestResponse();
-        PeerEntity peerEntity = getPeerFromHttpRequest(httpRequest);
+        PeerEntity peerEntity = commonUtil.getPeerFromHttpRequest(httpRequest);
         List<Recommendation> list_recs = new ArrayList<>();
 
         // All Quests, need to change to quests that are not completed, maybe a filter
@@ -89,7 +83,7 @@ public class RecommendationServiceImpl implements RecommendationService {
     @Override
     public RecommendationPersonalityResponse getPersonalityRecommendation(HttpServletRequest httpRequest) {
         RecommendationPersonalityResponse response = new RecommendationPersonalityResponse();
-        PeerEntity peerEntity = getPeerFromHttpRequest(httpRequest);
+        PeerEntity peerEntity = commonUtil.getPeerFromHttpRequest(httpRequest);
         List<Recommendation> list_recs = new ArrayList<>();
 
         // All Quests, need to change to quests that are not completed, maybe a filter
@@ -177,17 +171,5 @@ public class RecommendationServiceImpl implements RecommendationService {
         score = score * 10 / 4;
         System.out.println("Personality Score: " + score);
         return score;
-    }
-
-    private PeerEntity getPeerFromHttpRequest(HttpServletRequest httpRequest) {
-        String token = jwtUtil.getJwtFromCookies(httpRequest);
-        String username = jwtUtil.getUserNameFromJwtToken(token);
-        Optional<PeerLoginEntity> peerLoginEntity = peerLoginRepository.findByUsername(username);
-        if (peerLoginEntity.isEmpty()) {
-            return null;
-        }
-        Optional<PeerEntity> peerEntity = peerRepository.findById(
-                new PeerEntity.Key(peerLoginEntity.get().getPeerId()));
-        return peerEntity.orElse(null);
     }
 }
