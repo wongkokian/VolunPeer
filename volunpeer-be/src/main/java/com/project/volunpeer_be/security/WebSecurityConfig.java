@@ -66,6 +66,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers("/auth/**").permitAll()
                                 .requestMatchers("/peer/create").permitAll()
+                                .requestMatchers("/organisation/create").permitAll()
                                 .requestMatchers(AUTH_WHITE_LIST).permitAll()
                                 .anyRequest().authenticated()
                 );
