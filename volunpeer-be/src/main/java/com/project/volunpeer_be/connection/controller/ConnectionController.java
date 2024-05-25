@@ -102,11 +102,22 @@ public class ConnectionController {
         return response;
     }
 
-    @PostMapping("/potential")
+    @GetMapping("/potential")
     public PotentialConnectionResponse getPotentialConnectionList(HttpServletRequest httpRequest) {
         PotentialConnectionResponse response = new PotentialConnectionResponse();
         try {
             response = connectionService.getPotentialConnectionList(httpRequest);
+        } catch (Exception e) {
+            response.setStatusCode(StatusCode.FAILURE);
+        }
+        return response;
+    }
+
+    @GetMapping("/upcoming-quest")
+    public ConnectionUpcomingQuestResponse getConnectionUpcomingQuests(HttpServletRequest httpRequest) {
+        ConnectionUpcomingQuestResponse response = new ConnectionUpcomingQuestResponse();
+        try {
+            response = connectionService.getConnectionUpcomingQuests(httpRequest);
         } catch (Exception e) {
             response.setStatusCode(StatusCode.FAILURE);
         }

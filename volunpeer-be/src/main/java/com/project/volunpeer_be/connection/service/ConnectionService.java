@@ -22,4 +22,6 @@ public interface ConnectionService {
     DeleteConnectionResponse deleteConnection(DeleteConnectionRequest request, HttpServletRequest httpRequest);
 
     PotentialConnectionResponse getPotentialConnectionList(HttpServletRequest httpRequest);
+
+    ConnectionUpcomingQuestResponse getConnectionUpcomingQuests(HttpServletRequest httpRequest);
 }

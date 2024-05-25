@@ -8,4 +8,5 @@ import lombok.Data;
 public class Connection {
     private String peerId;
     private String name;
+    private String personality;
 }

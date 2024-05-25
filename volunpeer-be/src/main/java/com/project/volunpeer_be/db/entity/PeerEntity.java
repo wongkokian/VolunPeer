@@ -6,6 +6,7 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -23,7 +24,7 @@ public class PeerEntity {
     private HashSet<String> sentConnectionRequests;
     private HashSet<String> receivedConnectionRequests;
     private String personality;
-    private Integer points;
+    private List<Integer> points;
 
     @Data
     @AllArgsConstructor
