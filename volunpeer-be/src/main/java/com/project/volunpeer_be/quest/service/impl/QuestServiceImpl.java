@@ -13,6 +13,7 @@ import com.project.volunpeer_be.db.repository.PeerRepository;
 import com.project.volunpeer_be.db.entity.QuestShiftEntity;
 import com.project.volunpeer_be.db.repository.QuestRepository;
 import com.project.volunpeer_be.db.repository.QuestShiftRepository;
+import com.project.volunpeer_be.quest.dto.Quest;
 import com.project.volunpeer_be.quest.dto.QuestShift;
 import com.project.volunpeer_be.quest.dto.request.PeerQuestShiftRequest;
 import com.project.volunpeer_be.quest.dto.request.QuestCreateRequest;
@@ -20,6 +21,7 @@ import com.project.volunpeer_be.quest.dto.request.QuestDetailsRequest;
 import com.project.volunpeer_be.quest.dto.response.PeerQuestShiftResponse;
 import com.project.volunpeer_be.quest.dto.response.QuestCreateResponse;
 import com.project.volunpeer_be.quest.dto.response.QuestDetailsResponse;
+import com.project.volunpeer_be.quest.dto.response.QuestListResponse;
 import com.project.volunpeer_be.quest.service.QuestService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -52,6 +54,8 @@ public class QuestServiceImpl implements QuestService {
     KeyGeneratorUtil keyGen;
 
     ObjectMapper mapper = new ObjectMapper();
+
+    private static final double EARTH_RADIUS_METERS = 6371000;
 
     @Override
     public QuestCreateResponse createQuest(QuestCreateRequest request) {
@@ -102,6 +106,57 @@ public class QuestServiceImpl implements QuestService {
         response.setQuestShifts(questShifts);
         response.setStatusCode(StatusCode.SUCCESS);
         return response;
+    }
+
+    @Override
+    public QuestListResponse getAllQuests(HttpServletRequest httpServletRequest) {
+        String peerId = commonUtil.getPeerFromHttpRequest(httpServletRequest).getPeerId();
+        QuestListResponse response = new QuestListResponse();
+
+        Optional<PeerEntity> peer = peerRepository.findById(new PeerEntity.Key(peerId));
+        if (peer.isEmpty()) {
+            response.setStatusCode(StatusCode.USER_DOES_NOT_EXIST);
+            return response;
+        }
+        String peerLocation = peer.get().getLocation();
+
+        List<Quest> quests = new ArrayList<>();
+
+        // Get all quests and calculate distance score for each quest
+        List<QuestEntity> questEntities = questRepository.findAll();
+        for (QuestEntity questEntity : questEntities) {
+            Quest quest = mapper.convertValue(questEntity, Quest.class);
+            double distance = getDistance(peerLocation, questEntity.getLocationCoordinates());
+            quest.setDistance(distance);
+            quests.add(quest);
+        }
+        response.setQuests(quests);
+        response.setStatusCode(StatusCode.SUCCESS);
+        return response;
+    }
+
+    private double getDistance(String peerLocation, String questLocation) {
+        String[] peerLatLong = peerLocation.split(",");
+        String[] questLatLong = questLocation.split(",");
+
+        double peerLat = Double.parseDouble(peerLatLong[0]);
+        double peerLong = Double.parseDouble(peerLatLong[1]);
+        double questLat = Double.parseDouble(questLatLong[0]);
+        double questLong = Double.parseDouble(questLatLong[1]);
+
+        return haversineDistance(peerLat, peerLong, questLat, questLong);
+    }
+
+    private double haversineDistance(double lat1, double lon1, double lat2, double lon2) {
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return EARTH_RADIUS_METERS * c;
     }
 
     @Override
@@ -180,5 +235,4 @@ public class QuestServiceImpl implements QuestService {
         response.setStatusCode(StatusCode.SUCCESS);
         return response;
     }
-
 }

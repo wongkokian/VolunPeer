@@ -6,6 +6,7 @@ import com.project.volunpeer_be.quest.dto.request.QuestCreateRequest;
 import com.project.volunpeer_be.quest.dto.request.QuestDetailsRequest;
 import com.project.volunpeer_be.quest.dto.response.QuestCreateResponse;
 import com.project.volunpeer_be.quest.dto.response.QuestDetailsResponse;
+import com.project.volunpeer_be.quest.dto.response.QuestListResponse;
 import com.project.volunpeer_be.quest.dto.response.PeerQuestShiftResponse;
 import com.project.volunpeer_be.quest.service.QuestService;
 
@@ -42,6 +43,17 @@ public class QuestController {
             response = questService.getQuestDetails(request);
         } catch (Exception e) {
             System.out.println(e);
+            response.setStatusCode(StatusCode.FAILURE);
+        }
+        return response;
+    }
+
+    @PostMapping("/quest-list")
+    public QuestListResponse getAllQuests(HttpServletRequest httpServletRequest) {
+        QuestListResponse response = new QuestListResponse();
+        try {
+            response = questService.getAllQuests(httpServletRequest);
+        } catch (Exception e) {
             response.setStatusCode(StatusCode.FAILURE);
         }
         return response;
