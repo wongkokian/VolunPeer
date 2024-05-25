@@ -45,6 +45,7 @@ public class PeerController {
         try {
             response = peerService.addPeerPersonalityInterest(request, httpRequest);
         } catch (Exception e) {
+            System.out.println(e);
             response.setStatusCode(StatusCode.FAILURE);
         }
         return response;
