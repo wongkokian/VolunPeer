@@ -7,7 +7,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
-@Document("Quests")
+@Document("Quest-Shifts")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class QuestShiftEntity {
     @Id
