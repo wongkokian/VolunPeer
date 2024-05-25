@@ -13,7 +13,8 @@ import java.util.List;
 public class PeerDetailsResponse extends BaseResponse {
     private String name;
     private List<String> interests;
-    private String location;
+    private String locationCoordinates;
+    private String locationName;
     private List<String> connections;
     private String personality;
 }

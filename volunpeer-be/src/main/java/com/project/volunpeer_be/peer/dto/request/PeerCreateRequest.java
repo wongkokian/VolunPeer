@@ -7,5 +7,6 @@ public class PeerCreateRequest {
     private String username;
     private String password;
     private String name;
-    private String location;
+    private String locationCoordinates;
+    private String locationName;
 }
