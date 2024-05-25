@@ -104,6 +104,9 @@ public class QuestServiceImpl implements QuestService {
         List<QuestShiftEntity> questShiftEntities = questShiftRepository.findByQuestId(request.getQuestId());
         for (QuestShiftEntity questShiftEntity : questShiftEntities) {
             QuestShift questShift = mapper.convertValue(questShiftEntity, QuestShift.class);
+            questShift.setStartDateTime(questShiftEntity.getStartDateTime());
+            questShift.setEndDateTime(questShiftEntity.getEndDateTime());
+
             questShifts.add(questShift);
         }
 
