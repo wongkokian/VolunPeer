@@ -19,7 +19,8 @@ public class PeerEntity {
     private String peerId;
     private String name;
     private List<String> interests;
-    private String location;
+    private String locationCoordinates;
+    private String locationName;
     private HashSet<String> connections;
     private HashSet<String> sentConnectionRequests;
     private HashSet<String> receivedConnectionRequests;
