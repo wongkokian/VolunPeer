@@ -20,4 +20,6 @@ public interface ConnectionService {
     RejectConnectionResponse rejectConnection(RejectConnectionRequest request, HttpServletRequest httpRequest);
 
     DeleteConnectionResponse deleteConnection(DeleteConnectionRequest request, HttpServletRequest httpRequest);
+
+    PotentialConnectionResponse getPotentialConnectionList(HttpServletRequest httpRequest);
 }
