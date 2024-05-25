@@ -5,9 +5,11 @@ import com.project.volunpeer_be.common.enums.KeyType;
 import com.project.volunpeer_be.common.enums.StatusCode;
 import com.project.volunpeer_be.common.util.CommonUtil;
 import com.project.volunpeer_be.common.util.KeyGeneratorUtil;
+import com.project.volunpeer_be.db.entity.OrganisationEntity;
 import com.project.volunpeer_be.db.entity.PeerEntity;
 import com.project.volunpeer_be.db.entity.PeerQuestShiftEntity;
 import com.project.volunpeer_be.db.entity.QuestEntity;
+import com.project.volunpeer_be.db.repository.OrganisationRepository;
 import com.project.volunpeer_be.db.repository.PeerQuestShiftRepository;
 import com.project.volunpeer_be.db.repository.PeerRepository;
 import com.project.volunpeer_be.db.entity.QuestShiftEntity;
@@ -43,6 +45,9 @@ public class QuestServiceImpl implements QuestService {
 
     @Autowired
     PeerRepository peerRepository;
+
+    @Autowired
+    OrganisationRepository organisationRepository;
 
     @Autowired
     QuestShiftRepository questShiftRepository;
@@ -122,12 +127,22 @@ public class QuestServiceImpl implements QuestService {
 
         List<Quest> quests = new ArrayList<>();
 
-        // Get all quests and calculate distance score for each quest
+        // Get all quests and process each fields we need in the response
         List<QuestEntity> questEntities = questRepository.findAll();
         for (QuestEntity questEntity : questEntities) {
+            // Calculate distance from user
             Quest quest = mapper.convertValue(questEntity, Quest.class);
             double distance = getDistance(peerLocation, questEntity.getLocationCoordinates());
             quest.setDistance(distance);
+
+            // Process org name
+            Optional<OrganisationEntity> org = organisationRepository.findById(new OrganisationEntity.Key(questEntity.getOrgId()));
+            if (org.isEmpty()) {
+                response.setStatusCode(StatusCode.ORGANISATION_DOES_NOT_EXIST);
+                return response;
+            }
+            quest.setOrgName(org.get().getName());
+
             quests.add(quest);
         }
         response.setQuests(quests);
