@@ -29,7 +29,6 @@ public class QuestController {
         try {
             response = questService.createQuest(request);
         } catch (Exception e) {
-            System.out.println(e);
             response.setStatusCode(StatusCode.FAILURE);
         }
         return response;

@@ -1,6 +1,7 @@
 package com.project.volunpeer_be.db.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.project.volunpeer_be.quest.dto.QuestShift;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
@@ -26,6 +27,7 @@ public class QuestEntity {
     private String imageUrl;
     private String locationCoordinates;
     private String locationName;
+    private List<QuestShift> questShifts;
 
     @Data
     @AllArgsConstructor
