@@ -2,10 +2,7 @@ package com.project.volunpeer_be.recommendation.service.impl;
 
 import com.project.volunpeer_be.common.util.CommonUtil;
 import com.project.volunpeer_be.db.entity.PeerEntity;
-import com.project.volunpeer_be.db.entity.PeerLoginEntity;
 import com.project.volunpeer_be.db.entity.QuestEntity;
-import com.project.volunpeer_be.db.repository.PeerLoginRepository;
-import com.project.volunpeer_be.db.repository.PeerRepository;
 import com.project.volunpeer_be.db.repository.QuestRepository;
 import com.project.volunpeer_be.db.repository.QuestShiftRepository;
 import com.project.volunpeer_be.recommendation.dto.Recommendation;
@@ -13,11 +10,12 @@ import com.project.volunpeer_be.recommendation.dto.response.RecommendationAllRes
 import com.project.volunpeer_be.recommendation.dto.response.RecommendationInterestResponse;
 import com.project.volunpeer_be.recommendation.dto.response.RecommendationPersonalityResponse;
 import com.project.volunpeer_be.recommendation.service.RecommendationService;
-import com.project.volunpeer_be.security.jwt.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -39,7 +37,6 @@ public class RecommendationServiceImpl implements RecommendationService {
         // All Quests, need to change to quests that are not completed, maybe a filter
         List<QuestEntity> questEntity = questRepository.findAll();
         questEntity.forEach(quest -> {
-            System.out.println(quest.getQuestId());
             double score = getDistanceScore(peerEntity.getLocationCoordinates(), quest.getLocationCoordinates())
                     + getInterestScore(peerEntity.getInterests(), quest.getRelevantInterest())
                     + getPersonalityScore(peerEntity.getPersonality(), quest.getMbtiTypes());
@@ -48,18 +45,18 @@ public class RecommendationServiceImpl implements RecommendationService {
             Recommendation recommendation = new Recommendation();
             recommendation.setTitle(quest.getTitle());
             recommendation.setOrgName(commonUtil.getOrganisationFromOrganisationId(quest.getOrgId()).getName());
-            recommendation.setLocation(quest.getLocationName());
+            recommendation.setLocationName(quest.getLocationName());
+            recommendation.setImageUrl(quest.getImageUrl());
+            recommendation.setNumRegistered(String.valueOf(
+                    Math.round(getNumberOfParticipants(quest.getMbtiTypes()))));
+            recommendation.setScore(string_score);
+            recommendation.setQuestId(quest.getQuestId());
             List<String> shifts = new ArrayList<>();
             questShiftRepository.findByQuestId(quest.getQuestId()).forEach(shift -> {
                 shifts.add(shift.getStartDateTime());
             });
-            recommendation.setShifts(shifts);
-            recommendation.setImageUrl(quest.getImageUrl());
-            recommendation.setNumberGoing(String.valueOf(
-                    Math.round(getNumberOfParticipants(quest.getMbtiTypes()))));
-            recommendation.setScore(string_score);
-            recommendation.setQuestId(quest.getQuestId());
-
+            recommendation.setStartDateTime(formatDateTimeResponse(shifts.get(0)));
+            recommendation.setEndDateTime(formatDateTimeResponse(shifts.get(shifts.size() - 1)));
             recommendation.setDouble_score(score);
             recommendation.setDescription(quest.getDescription());
             recommendation.setRelevantInterest(quest.getRelevantInterest());
@@ -84,14 +81,15 @@ public class RecommendationServiceImpl implements RecommendationService {
             Recommendation recommendation = new Recommendation();
             recommendation.setTitle(quest.getTitle());
             recommendation.setOrgName(commonUtil.getOrganisationFromOrganisationId(quest.getOrgId()).getName());
-            recommendation.setLocation(quest.getLocationName());
+            recommendation.setLocationName(quest.getLocationName());
             List<String> shifts = new ArrayList<>();
             questShiftRepository.findByQuestId(quest.getQuestId()).forEach(shift -> {
                 shifts.add(shift.getStartDateTime());
             });
-            recommendation.setShifts(shifts);
+            recommendation.setStartDateTime(formatDateTimeResponse(shifts.get(0)));
+            recommendation.setEndDateTime(formatDateTimeResponse(shifts.get(shifts.size() - 1)));
             recommendation.setImageUrl(quest.getImageUrl());
-            recommendation.setNumberGoing(String.valueOf(Math.round(getNumberOfParticipants(quest.getMbtiTypes()))));
+            recommendation.setNumRegistered(String.valueOf(Math.round(getNumberOfParticipants(quest.getMbtiTypes()))));
             recommendation.setScore(string_score);
             recommendation.setQuestId(quest.getQuestId());
 
@@ -119,14 +117,15 @@ public class RecommendationServiceImpl implements RecommendationService {
             Recommendation recommendation = new Recommendation();
             recommendation.setTitle(quest.getTitle());
             recommendation.setOrgName(commonUtil.getOrganisationFromOrganisationId(quest.getOrgId()).getName());
-            recommendation.setLocation(quest.getLocationName());
+            recommendation.setLocationName(quest.getLocationName());
             List<String> shifts = new ArrayList<>();
             questShiftRepository.findByQuestId(quest.getQuestId()).forEach(shift -> {
                 shifts.add(shift.getStartDateTime());
             });
-            recommendation.setShifts(shifts);
+            recommendation.setStartDateTime(formatDateTimeResponse(shifts.get(0)));
+            recommendation.setEndDateTime(formatDateTimeResponse(shifts.get(shifts.size() - 1)));
             recommendation.setImageUrl(quest.getImageUrl());
-            recommendation.setNumberGoing(String.valueOf(Math.round(getNumberOfParticipants(quest.getMbtiTypes()))));
+            recommendation.setNumRegistered(String.valueOf(Math.round(getNumberOfParticipants(quest.getMbtiTypes()))));
             recommendation.setScore(string_score);
             recommendation.setQuestId(quest.getQuestId());
 
@@ -207,6 +206,12 @@ public class RecommendationServiceImpl implements RecommendationService {
         score = score * 10 / 4;
         System.out.println("Personality Score: " + score);
         return score;
+    }
+
+    private String formatDateTimeResponse(String dateTime) {
+        LocalDateTime localDateTime = LocalDateTime.parse(dateTime);
+        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("EEE, MMM dd yyyy h.mma");
+        return localDateTime.format(outputFormatter);
     }
 
     private double getNumberOfParticipants(List<Integer> questPersonality) {

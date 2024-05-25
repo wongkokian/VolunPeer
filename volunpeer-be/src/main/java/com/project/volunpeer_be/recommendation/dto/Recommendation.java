@@ -12,12 +12,13 @@ public class Recommendation {
     // CORE FOR FE
     private String title;
     private String orgName;
-    private String location;
-    private List<String> shifts;
+    private String locationName;
     private String imageUrl;
-    private String numberGoing;
+    private String numRegistered;
     private String score;
     private String questId;
+    private String startDateTime;
+    private String endDateTime;
 
     // NON CORE
     private double double_score;
