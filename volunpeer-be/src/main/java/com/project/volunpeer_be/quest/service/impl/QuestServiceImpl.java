@@ -31,6 +31,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -144,6 +147,32 @@ public class QuestServiceImpl implements QuestService {
             }
             quest.setOrgName(org.get().getName());
 
+            // Process number of peers registered
+            Integer numPeers = 0;
+            numPeers += questEntity.getMbtiTypes().get(0) + questEntity.getMbtiTypes().get(1);
+
+            // Process overall start datetime and end datetime after getting all quest shifts
+            List<QuestShiftEntity> questShiftEntities = questShiftRepository.findByQuestId(questEntity.getQuestId());
+            String startDateTime = null;
+            String endDateTime = null;
+            for (QuestShiftEntity questShiftEntity : questShiftEntities) {
+                LocalDateTime start = LocalDateTime.parse(questShiftEntity.getStartDateTime());
+                LocalDateTime end = LocalDateTime.parse(questShiftEntity.getEndDateTime());
+                if (startDateTime == null || start.isBefore(LocalDateTime.parse(startDateTime))) {
+                    startDateTime = questShiftEntity.getStartDateTime();
+                }
+                if (endDateTime == null || end.isAfter(LocalDateTime.parse(endDateTime))) {
+                    endDateTime = questShiftEntity.getEndDateTime();
+                }
+            }
+
+            // Parse start and end datetime to "SAT, APR 25 2024 4.00PM" format
+            startDateTime = formatDateTimeResponse(startDateTime);
+            endDateTime = formatDateTimeResponse(endDateTime);
+
+            quest.setStartDateTime(startDateTime);
+            quest.setEndDateTime(endDateTime);
+
             quests.add(quest);
         }
         response.setQuests(quests);
@@ -173,6 +202,14 @@ public class QuestServiceImpl implements QuestService {
 
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         return EARTH_RADIUS_METERS * c;
+    }
+
+    private String formatDateTimeResponse(String dateTime) {
+        DateTimeFormatter inputFormatter = DateTimeFormatter.ISO_ZONED_DATE_TIME;
+        ZonedDateTime zonedDateTime = ZonedDateTime.parse(dateTime, inputFormatter);
+
+        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("EEE, MMM dd yyyy h.mma");
+        return zonedDateTime.format(outputFormatter);
     }
 
     @Override

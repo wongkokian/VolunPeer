@@ -12,4 +12,7 @@ public class Quest {
     private String distance;
     private String locationName;
     private String imageUrl;
+    private String numRegistered;
+    private String startDateTime;
+    private String endDateTime;
 }
