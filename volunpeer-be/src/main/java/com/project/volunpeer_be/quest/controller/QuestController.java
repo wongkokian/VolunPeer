@@ -76,6 +76,7 @@ public class QuestController {
         try {
             response = questService.getUpcomingQuests(httpServletRequest);
         } catch (Exception e) {
+            System.out.println(e);
             response.setStatusCode(StatusCode.FAILURE);
         }
         return response;
