@@ -1,0 +1,15 @@
+export const SIGN_UP = "/peer/create";
+export const LOG_IN = "/auth/login";
+export const ADD_PERSONALITY = "/peer/add-personality-interest";
+export const GET_ALL_QUESTS = "/quest/quest-list";
+export const GET_ALL_PEERS = "/connection/list";
+export const GET_QUEST_DETAILS = "/quest/details";
+export const GET_UPCOMING_QUESTS = "/quest/upcoming";
+export const GET_ALL_RECOMMENDED_QUESTS = "/recommendation/all";
+export const GET_RECOMMENDED_QUESTS_PERSONALITY = "/recommendation/personality";
+export const GET_RECOMMENDED_QUESTS_INTEREST = "/recommendation/interest";
+export const ASSIGN_QUEST_SHIFT = "/quest/quest-shift-assign";
+export const LIST_POTENTIAL_PEERS = "/connection/potential";
+export const PROFILE = "/peer/details";
+export const CONNECTION_SEND = "/connection/send";
+export const QUESTS_YOUR_PEERS_ARE_ATTENDING = "/connection/upcoming-quest";

@@ -1,0 +1,49 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2.5rem;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px,
+    rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
+  position: fixed;
+  width: 100dvw;
+  box-sizing: border-box;
+  top: 0;
+  background-color: white;
+  height: max-content;
+  z-index: 6;
+  &__walk {
+    background-repeat: no-repeat;
+    background-size: contain;
+    height: 2.3rem;
+    width: 2.3rem;
+    &Enchantress {
+      background-image: url("../../public/images/walk/enchantress-walk.png");
+    }
+    &Swordsman {
+      background-image: url("../../public/images/walk/swordsman-walk.png");
+    }
+    &Musketeer {
+      background-image: url("../../public/images/walk/musketeer-walk.png");
+    }
+  }
+  &__icon {
+    height: 1.8rem;
+    width: 1.8rem;
+    &Container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.2rem;
+      &:hover {
+        color: rgb(244 63 94);
+        cursor: pointer;
+      }
+    }
+    &Home {
+      background-repeat: no-repeat;
+      background-size: contain;
+      background-image: url("../../public/svg/icons/home.svg");
+    }
+  }
+}

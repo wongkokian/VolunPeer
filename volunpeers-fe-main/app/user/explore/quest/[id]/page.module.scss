@@ -1,0 +1,119 @@
+.quest {
+  &__container {
+    padding-top: 10rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  &__header {
+    width: 100dvw;
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    padding-top: 7rem;
+    box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
+      rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+    padding-bottom: 2rem;
+    &Content {
+      width: 1200px;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    &Hosted {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+  }
+  &__content {
+    width: 1200px;
+    display: flex;
+    gap: 3rem;
+    &Container {
+      display: flex;
+      justify-content: center;
+    }
+    &Left {
+      width: 60%;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      &Image {
+        background-repeat: no-repeat;
+        background-size: contain;
+        height: 25rem;
+        width: 100%;
+      }
+    }
+    &Right {
+      width: 40%;
+      display: flex;
+      flex-direction: column;
+      &Card {
+        top: 8rem;
+        position: sticky;
+        padding: 1.5rem;
+        border-radius: 0.8rem;
+        background-color: white;
+        display: flex;
+        flex-direction: column;
+        box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 0px 1px;
+        gap: 1.5rem;
+        &Checkbox {
+          height: 1.2rem;
+          width: 1.2rem;
+          border: 2px solid rgb(100 116 139);
+          border-radius: 0.2rem;
+          &Selected {
+            background-repeat: no-repeat;
+            background-size: contain;
+            background-image: url("../../../../../public/svg/icons/check.svg");
+          }
+          &:hover {
+            cursor: pointer;
+          }
+        }
+        &Details {
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+          &Container {
+            display: flex;
+            flex-direction: column;
+          }
+        }
+      }
+    }
+  }
+  &__avatar {
+    background-repeat: no-repeat;
+    background-size: contain;
+    height: 3rem;
+    width: 3em;
+    background-image: url("../../../../../public/svg/icons/avatar.svg");
+  }
+  &__icon {
+    background-repeat: no-repeat;
+    background-size: contain;
+    height: 2rem;
+    width: 2rem;
+    &Contact {
+      background-image: url("../../../../../public/svg/icons/contact.svg");
+    }
+    &Calendar {
+      background-image: url("../../../../../public/svg/icons/calendar.svg");
+    }
+  }
+  &__matchIcon {
+    background-color: rgb(244 63 94);
+    border-radius: 50%;
+    height: 3rem;
+    width: 3rem;
+    border: 2px solid rgb(244 63 94);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+  }
+}

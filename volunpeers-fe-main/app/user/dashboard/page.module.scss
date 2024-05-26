@@ -1,0 +1,32 @@
+.dashboard {
+  &__contentContainer {
+    padding-top: 10rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-bottom: 4rem;
+  }
+  &__upcoming {
+    width: 1200px;
+  }
+  &__recommended {
+    width: 1200px;
+    &TabContainer {
+      display: flex;
+    }
+    &Tab {
+      &Selected {
+        color: rgb(244 63 94);
+        border-bottom: 5px solid rgb(244 63 94);
+        padding-bottom: 0.3rem;
+        &:hover {
+          cursor: pointer;
+        }
+      }
+      &:hover {
+        color: rgb(244 63 94);
+        cursor: pointer;
+      }
+    }
+  }
+}

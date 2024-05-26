@@ -1,0 +1,22 @@
+.character {
+  background-repeat: no-repeat;
+  background-size: contain;
+  &__archer {
+    background-image: url("../../public/images/idle/archer_idle.png");
+  }
+  &__musketeer {
+    background-image: url("../../public/images/idle/musketeer_idle.png");
+  }
+  &__wizard {
+    background-image: url("../../public/images/idle/wizard_idle.png");
+  }
+  &__swordsman {
+    background-image: url("../../public/images/idle/swordsman_idle.png");
+  }
+  &__enchantress {
+    background-image: url("../../public/images/idle/enchantress_idle.png");
+  }
+  &__knight {
+    background-image: url("../../public/images/idle/knight_idle.png");
+  }
+}
