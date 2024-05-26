@@ -255,7 +255,7 @@ public class ConnectionServiceImpl implements ConnectionService {
                 
                 // Only add the quest shift if it is active
                 questShiftEntity.ifPresent(questShift -> {
-                    if (LocalDateTime.parse(questShift.getStartDateTime()).isAfter(LocalDateTime.now())) {
+                    if (questShiftEntity.get().getIsCompleted().equals(0)) {
                         activeQuestShifts.add(questShift);
                     }
                 });
