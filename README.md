@@ -1,4 +1,6 @@
 # VolunPeers IS LIVE!!! TRY IT NOW!!!
+<img title="Logo" alt="Alt text" src="/volunpeers-fe-main/public/images/logo/volunpeers_trans.png">
+
 Click here: https://volunpeers.netlify.app/
 
 To fully enjoy the experience, please try to sign up as a volunpeer on our platform, and then log in to an existing account:
