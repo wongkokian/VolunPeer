@@ -1,3 +1,10 @@
+# VolunPeers IS LIVE!!! TRY IT NOW!!!
+Click here: https://volunpeers.netlify.app/
+
+To fully enjoy the experience, please try to sign up as a volunpeer on our platform, and then log in to an existing account:
+Username: receiver1
+Password: receiver1
+
 # VolunPeers
 
 - VolunPeers is a gamified web application that allows users to browse and register for volunteer opportunities
