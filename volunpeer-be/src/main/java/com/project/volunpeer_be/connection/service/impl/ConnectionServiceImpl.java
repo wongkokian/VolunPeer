@@ -230,6 +230,13 @@ public class ConnectionServiceImpl implements ConnectionService {
             potentialConnection.setQuests(potentialConnections.get(potentialConnection).stream().toList());
             resultList.add(potentialConnection);
         }
+
+        HashSet<String> connections = peer.getConnections();
+        HashSet<String> sentConnections = peer.getSentConnectionRequests();
+        HashSet<String> receivedConnections = peer.getReceivedConnectionRequests();
+        resultList = resultList.stream().filter(c -> !connections.contains(c.getPeerId())).toList();
+        resultList = resultList.stream().filter(c -> !sentConnections.contains(c.getPeerId())).toList();
+        resultList = resultList.stream().filter(c -> !receivedConnections.contains(c.getPeerId())).toList();
         response.setPotentialConnections(resultList);
         response.setStatusCode(StatusCode.SUCCESS);
         return response;
