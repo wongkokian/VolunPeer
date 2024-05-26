@@ -3,6 +3,7 @@ package com.project.volunpeer_be.connection.service.impl;
 import com.project.volunpeer_be.common.enums.StatusCode;
 import com.project.volunpeer_be.common.util.CommonUtil;
 import com.project.volunpeer_be.connection.dto.Connection;
+import com.project.volunpeer_be.connection.dto.ConnectionUpcomingQuest;
 import com.project.volunpeer_be.connection.dto.PotentialConnection;
 import com.project.volunpeer_be.connection.dto.PotentialConnectionShift;
 import com.project.volunpeer_be.connection.dto.request.*;
@@ -12,8 +13,10 @@ import com.project.volunpeer_be.db.entity.*;
 import com.project.volunpeer_be.db.repository.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -229,17 +232,55 @@ public class ConnectionServiceImpl implements ConnectionService {
     @Override
     public ConnectionUpcomingQuestResponse getConnectionUpcomingQuests(HttpServletRequest httpRequest) {
         PeerEntity peer = commonUtil.getPeerFromHttpRequest(httpRequest);
+        ConnectionUpcomingQuestResponse response = new ConnectionUpcomingQuestResponse();
+        List<ConnectionUpcomingQuest> connectionUpcomingQuests = new ArrayList<>();
+
         //get a list of connections
         HashSet<String> connectionIds = peer.getConnections();
 
-        // for each connection, find out peer quest-shift
         for(String connectionId : connectionIds) {
-            List<PeerQuestShiftEntity> peerQuestShift = peerQuestShiftRepository.findByPeerId(connectionId);
+            List<PeerQuestShiftEntity> peerQuestShift = new ArrayList<>();
+            HashSet<QuestShiftEntity> activeQuestShifts = new HashSet<>();
 
+            // Process each quest shift for each connection to get just the active quest shifts
+            peerQuestShift = peerQuestShiftRepository.findByPeerId(connectionId);
+            for(PeerQuestShiftEntity peerQuestShiftEntity : peerQuestShift) {
+                Optional<QuestShiftEntity> questShiftEntity = questShiftRepository.findById(new QuestShiftEntity.Key(peerQuestShiftEntity.getQuestId(), peerQuestShiftEntity.getShiftNum()));
+                
+                // Only add the quest shift if it is active
+                questShiftEntity.ifPresent(questShift -> {
+                    if (LocalDateTime.parse(questShift.getStartDateTime()).isAfter(LocalDateTime.now())) {
+                        activeQuestShifts.add(questShift);
+                    }
+                });
+            }
+
+            for(QuestShiftEntity questShiftEntity : activeQuestShifts) {
+                ConnectionUpcomingQuest connectionUpcomingQuest = new ConnectionUpcomingQuest();
+
+                String questId = questShiftEntity.getQuestId();
+                Optional<QuestEntity> questEntity = questRepository.findById(new QuestEntity.Key(questId));
+                
+                // Process peer 
+                Optional<PeerEntity> peerEntity = peerRepository.findById(new PeerEntity.Key(connectionId));
+                if (peerEntity.isEmpty()) {
+                    response.setStatusCode(StatusCode.USER_DOES_NOT_EXIST);
+                    return response;
+                }
+                connectionUpcomingQuest.setPeerName(peerEntity.get().getName());
+
+                // Process quest shifts
+                connectionUpcomingQuest.setQuestTitle(questEntity.get().getTitle());
+                connectionUpcomingQuest.setImageUrl(questEntity.get().getImageUrl());
+                connectionUpcomingQuest.setStartDateTime(questShiftEntity.getStartDateTime());
+                connectionUpcomingQuest.setEndDateTime(questShiftEntity.getEndDateTime());
+                connectionUpcomingQuests.add(connectionUpcomingQuest);
+            }
+                
         }
-        // get quest info
-        // get shift info
-        // add connection of list of connections
-        return null;
+        response.setQuests(connectionUpcomingQuests);
+        response.setStatusCode(StatusCode.SUCCESS);
+
+        return response;
     }
 }

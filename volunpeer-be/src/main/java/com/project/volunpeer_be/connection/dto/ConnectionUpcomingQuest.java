@@ -10,7 +10,9 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ConnectionUpcomingQuest {
-    private String organisationName;
+    private String peerName;
     private String questTitle;
-    private List<ConnectionUpcomingQuestShift> shifts;
+    private String imageUrl;
+    private String startDateTime;
+    private String endDateTime;
 }
