@@ -10,6 +10,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ConnectionUpcomingQuest {
+    private String questId;
     private String peerName;
     private String questTitle;
     private String imageUrl;

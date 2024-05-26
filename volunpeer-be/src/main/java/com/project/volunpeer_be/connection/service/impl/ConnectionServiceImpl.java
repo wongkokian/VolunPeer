@@ -17,6 +17,7 @@ import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -283,10 +284,23 @@ public class ConnectionServiceImpl implements ConnectionService {
                 connectionUpcomingQuest.setPeerName(peerEntity.get().getName());
 
                 // Process quest shifts
+                connectionUpcomingQuest.setQuestId(questEntity.get().getQuestId());
                 connectionUpcomingQuest.setQuestTitle(questEntity.get().getTitle());
                 connectionUpcomingQuest.setImageUrl(questEntity.get().getImageUrl());
-                connectionUpcomingQuest.setStartDateTime(questShiftEntity.getStartDateTime());
-                connectionUpcomingQuest.setEndDateTime(questShiftEntity.getEndDateTime());
+
+                DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("hh:mm a");
+
+                //set start time
+                LocalDateTime localStartDateTime = LocalDateTime.parse(questShiftEntity.getStartDateTime());
+                String startDateTime = localStartDateTime.format(outputFormatter);
+                connectionUpcomingQuest.setStartDateTime(startDateTime);
+
+
+                // set end time
+                LocalDateTime localEndDateTime = LocalDateTime.parse(questShiftEntity.getEndDateTime());
+                String endDateTime = localEndDateTime.format(outputFormatter);
+                connectionUpcomingQuest.setEndDateTime(endDateTime);
+
                 connectionUpcomingQuests.add(connectionUpcomingQuest);
             }
                 
