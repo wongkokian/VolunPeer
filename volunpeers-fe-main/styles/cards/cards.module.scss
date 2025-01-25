@@ -1,0 +1,63 @@
+.cards {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 3rem;
+  gap: 3rem;
+}
+.card {
+  display: flex;
+  flex-direction: column;
+  height: 25rem;
+  width: 20rem;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  border-radius: 0.8rem;
+  &:hover {
+    // box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    cursor: pointer;
+  }
+
+  &__image {
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 12rem;
+    width: 100%;
+    border-radius: 0.8rem 0.8rem 0 0;
+    position: relative;
+    &MatchIcon {
+      position: absolute;
+      bottom: 0.5rem;
+      right: 0.5rem;
+      z-index: 5;
+      background-color: rgb(244 63 94);
+      border-radius: 50%;
+      height: 3rem;
+      width: 3rem;
+      border: 2px solid rgb(244 63 94);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+    }
+  }
+  &__content {
+    display: flex;
+    flex-direction: column;
+    color: rgb(100 116 139);
+    gap: 1rem;
+    padding: 1.5rem;
+  }
+  &__icon {
+    height: 1rem;
+    width: 1rem;
+    background-repeat: no-repeat;
+    background-size: contain;
+    &Calendar {
+      background-image: url("../../public/svg/icons/calendar.svg");
+    }
+    &Tick {
+      background-image: url("../../public//svg//icons//tick.svg");
+    }
+  }
+}

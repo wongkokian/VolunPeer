@@ -1,0 +1,13 @@
+.badge {
+  background-repeat: no-repeat;
+  background-size: contain;
+  &__animal {
+    background-image: url("../../public/images/badge/animal.png");
+  }
+  &__eldercare {
+    background-image: url("../../public/images/badge/eldercare.png");
+  }
+  &__environment {
+    background-image: url("../../public/images/badge/environment.png");
+  }
+}

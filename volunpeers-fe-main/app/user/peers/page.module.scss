@@ -1,0 +1,33 @@
+.peers {
+  &__container {
+    padding-top: 10rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  &__content {
+    width: 1200px;
+    &TabContainer {
+      display: flex;
+    }
+    &Tab {
+      &Selected {
+        color: rgb(244 63 94);
+        border-bottom: 5px solid rgb(244 63 94);
+        padding-bottom: 0.3rem;
+        &:hover {
+          cursor: pointer;
+        }
+      }
+      &:hover {
+        color: rgb(244 63 94);
+        cursor: pointer;
+      }
+    }
+  }
+  &__addPeersContent {
+    display: flex;
+    flex-direction: column;
+    margin-top: 3rem;
+  }
+}

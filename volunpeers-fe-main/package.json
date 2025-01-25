@@ -1,0 +1,25 @@
+{
+  "name": "hacksingapore-social-responsibility",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@mapbox/search-js-react": "^1.0.0-beta.21",
+    "cookies-next": "^4.2.1",
+    "next": "14.2.3",
+    "react": "^18",
+    "react-dom": "^18",
+    "react-select": "^5.8.0",
+    "recoil": "^0.7.7"
+  },
+  "devDependencies": {
+    "eslint": "^8",
+    "eslint-config-next": "14.2.3",
+    "sass": "^1.77.2"
+  }
+}

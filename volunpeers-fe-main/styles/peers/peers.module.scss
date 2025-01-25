@@ -1,0 +1,25 @@
+.peer {
+  background-color: white;
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  width: 700px;
+  box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 0px 1px;
+  &Avatar {
+    background-image: url("../../public/images/avatar/cat-profile-pic.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 4rem;
+    width: 4rem;
+    border-radius: 50%;
+  }
+  &Quest {
+    padding: 0.5rem;
+    background-color: rgb(255 241 242);
+    max-width: fit-content;
+    border-radius: 0.8rem;
+    border: 2px solid rgb(244 63 94);
+  }
+}
